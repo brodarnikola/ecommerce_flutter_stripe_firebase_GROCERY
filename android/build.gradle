@@ -1,0 +1,36 @@
+// Mon Feb 05 03:57:12 CET 2024
+/* buildscript {
+    ext.kotlin_version = '1.9.20' // // '1.8.22' //'1.9.22'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        classpath 'com.google.gms.google-services:4.3.10'
+        // classpath("com.google.gms.google-services") version "4.4.1" apply false
+        // classpath 'com.google.gms:google-services:4.3.10'
+    }
+} */
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

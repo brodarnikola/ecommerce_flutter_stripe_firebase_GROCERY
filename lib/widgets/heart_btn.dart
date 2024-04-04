@@ -69,7 +69,7 @@ class _HeartBTNState extends State<HeartBTN> {
           ? const Padding(
               padding: EdgeInsets.all(8.0),
               child: SizedBox(
-                  height: 15, width: 15, child: CircularProgressIndicator()),
+                  height: 10, width: 10, child: CircularProgressIndicator()),
             )
           : Icon(
               widget.isInWishlist != null && widget.isInWishlist == true

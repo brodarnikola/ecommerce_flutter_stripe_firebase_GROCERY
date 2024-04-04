@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocery_app/consts/firebase_consts.dart';
 import 'package:grocery_app/screens/cart/cart_widget.dart';
@@ -15,6 +19,8 @@ import '../../providers/products_provider.dart';
 import '../../services/global_methods.dart';
 import '../../services/utils.dart';
 import '../../widgets/empty_screen.dart';
+
+import 'package:http/http.dart' as http;
 
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -114,6 +120,16 @@ class CartScreen extends StatelessWidget {
                 final productProvider =
                     Provider.of<ProductsProvider>(ctx, listen: false);
 
+                try {
+                  await initPayment(
+                      email: user?.email ?? "",
+                      amount: total * 100,
+                      context: ctx);
+                } catch (error) {
+                  log('An error occured: $error');
+                  return;
+                }
+
                 cartProvider.getCartItems.forEach((key, value) async {
                   final getCurrProduct = productProvider.findProdById(
                     value.productId,
@@ -125,7 +141,7 @@ class CartScreen extends StatelessWidget {
                         .doc(orderId)
                         .set({
                       'orderId': orderId,
-                      'userId': user!.uid,
+                      'userId': user?.uid,
                       'productId': value.productId,
                       'price': (getCurrProduct.isOnSale
                               ? getCurrProduct.salePrice
@@ -134,7 +150,7 @@ class CartScreen extends StatelessWidget {
                       'totalPrice': total,
                       'quantity': value.quantity,
                       'imageUrl': getCurrProduct.imageUrl,
-                      'userName': user.displayName,
+                      'userName': user?.displayName,
                       'orderDate': Timestamp.now(),
                     });
                     await cartProvider.clearOnlineCart();
@@ -173,5 +189,60 @@ class CartScreen extends StatelessWidget {
         ]),
       ),
     );
+  }
+}
+
+Future<void> initPayment(
+    {required String email,
+    required double amount,
+    required BuildContext context}) async {
+  try {
+    // 1. Create a payment intent on the server
+    final response = await http.post(
+        Uri.parse(
+            'https://us-central1-grocery---flutter-course-d0a1e.cloudfunctions.net/stripePaymentIntentRequest'),
+        body: {
+          'email': email,
+          'amount': amount.toString(),
+        });
+
+    final jsonResponse = jsonDecode(response.body);
+    log(jsonResponse.toString());
+    if (jsonResponse['success'] == false) {
+      GlobalMethods.errorDialog(
+          subtitle: jsonResponse['error'], context: context);
+          throw jsonResponse['error'];
+    }
+    // 2. Initialize the payment sheet
+    await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+      paymentIntentClientSecret: jsonResponse['paymentIntent'],
+      merchantDisplayName: 'Grocery Flutter course',
+      customerId: jsonResponse['customer'],
+      customerEphemeralKeySecret: jsonResponse['ephemeralKey'],
+      // testEnv: true,
+      // merchantCountryCode: 'SG',
+    ));
+    await Stripe.instance.presentPaymentSheet();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Payment is successful'),
+      ),
+    );
+  } catch (errorr) {
+    if (errorr is StripeException) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occured ${errorr.error.localizedMessage}'),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occured $errorr'),
+        ),
+      );
+    }
+    throw '$errorr';
   }
 }

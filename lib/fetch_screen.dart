@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -29,17 +31,18 @@ class _FetchScreenState extends State<FetchScreen> {
       final cartProvider = Provider.of<CartProvider>(context, listen: false);
       final wishlistProvider =
           Provider.of<WishlistProvider>(context, listen: false);
-      // final orderProvider = Provider.of<OrdersProvider>(context, listen: false);
+      final orderProvider = Provider.of<OrdersProvider>(context, listen: false);
       final User? user = authInstance.currentUser;
       if (user == null) {
         await productsProvider.fetchProducts();
         cartProvider.clearLocalCart();
         wishlistProvider.clearLocalWishlist();
+        orderProvider.clearLocalOrders();
       } else {
         await productsProvider.fetchProducts();
         await cartProvider.fetchCart();
         await wishlistProvider.fetchWishlist();
-        // await orderProvider.fetchOrders();
+        await orderProvider.fetchOrders();
       }
       if (!mounted) return;
       Navigator.of(context).pushReplacement(MaterialPageRoute(

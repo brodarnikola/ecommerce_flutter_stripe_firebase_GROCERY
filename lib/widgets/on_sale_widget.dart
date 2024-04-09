@@ -52,10 +52,12 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
             padding: const EdgeInsets.all(8.0),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                // mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       FancyShimmerImage(
                         imageUrl: productModel.imageUrl,
@@ -122,13 +124,17 @@ class _OnSaleWidgetState extends State<OnSaleWidget> {
                     isOnSale: true,
                   ),
                   const SizedBox(height: 5),
+                  Expanded(
+                    flex: 2,
+                    child: 
                   TextWidget(
                     text: productModel.title,
                     color: color,
                     textSize: 16,
-                    isTitle: true,
+                    isTitle: true, 
+                  )
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 1),
                 ]),
           ),
         ),

@@ -2,6 +2,12 @@
 
 In this example, I learned, practice Flutter, Firebase, Stripe skill. Using Firebase Firestore to store collections for products, users, orders and Firebase functions to make payment even more secure.
 
+This example uses stripe payment gateway together with firebase functions. So that all this thing, will work, few commands needs to be typed inside terminal. 
+First it needs to be typed:
+1) Firebase login -> the same email as in firebase project
+2) Firebase init -> Follow the instruction.. If you already have firebase project, you can choose override.. No need for eslint. Click "y" or "yes" to install npm packages
+3) Firebase deploy --only functions .. After that with this command you can deploy firebase functions, so that stripe payment gateway will work
+
 # Code updated to Flutter v3.7 
 
 ### Attention:

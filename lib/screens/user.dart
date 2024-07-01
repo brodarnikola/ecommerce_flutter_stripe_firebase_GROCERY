@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_app/consts/firebase_consts.dart';
+import 'package:grocery_app/models/album_model.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 import 'package:grocery_app/screens/orders/orders_screen.dart';
@@ -15,6 +19,8 @@ import 'package:provider/provider.dart';
 
 import '../providers/dark_theme_provider.dart';
 import 'auth/login.dart';
+
+import 'package:http/http.dart' as http;
 
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
@@ -139,8 +145,9 @@ class _UserScreenState extends State<UserScreen> {
                   title: 'Address 2',
                   subtitle: address,
                   icon: IconlyLight.profile,
-                  onPressed: () async {
-                    await _showAddressDialog();
+                  onPressed: ()  {
+                     fetchAlbum();
+                    // await _showAddressDialog();
                   },
                   color: color,
                 ),
@@ -237,6 +244,27 @@ class _UserScreenState extends State<UserScreen> {
       ),
     ));
   }
+
+
+  Future<Album> fetchAlbum() async {
+  final response = await http
+      .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/2'));
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+
+    log("album  ${response}");
+    log("album body ${response.body}");
+    return Album.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load album');
+  }
+}
+
+
 
   Future<void> _showAddressDialog() async {
     await showDialog(

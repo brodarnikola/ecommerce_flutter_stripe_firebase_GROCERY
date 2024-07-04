@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:card_swiper/card_swiper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -18,6 +16,14 @@ import '../../widgets/auth_button.dart';
 import '../../widgets/text_widget.dart';
 import 'forget_pass.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'dart:convert';
+import 'dart:developer' as developer;
+import 'package:http/http.dart' as http;
+
+import 'package:grocery_app/models/album_model.dart';
+
+import 'package:flutter/foundation.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const routeName = '/RegisterScreen';
@@ -51,6 +57,118 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   bool _isLoading = false;
+
+  void register() async {
+    final isValid = _formKey.currentState!.validate();
+    FocusScope.of(context).unfocus();
+
+    if (isValid) {
+      _formKey.currentState!.save();
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        Map data = {
+          'Username': _emailTextController.text.toLowerCase().trim(),
+          'Password': _passTextController.text.trim(),
+          'Name': _fullNameController.text.trim(),
+          'Surname': " Awesome",
+          'Address': _addressTextController.text.trim(),
+          'City': _addressTextController.text.trim(),
+          'Zip': _addressTextController.text.trim(),
+          'State': _addressTextController.text.trim(),
+          'Phone': _addressTextController.text.trim(),
+          'Email': _emailTextController.text.toLowerCase().trim(),
+          'OIB': "",
+          'EmailNotificationTypeID': 1,
+          'LanguageID': 1,
+          'DeviceOS': "android",
+        };
+        // developer.log(data as String);
+
+        String bodyData = json.encode(data);
+        final response = await http.post(
+          Uri.parse('https://rp.markoja.hr/api/registeruser'),
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          },
+          body: bodyData,
+        );
+
+        if (response.statusCode == 200) {
+          // If the server did return a 200 OK response,
+          // then parse the JSON.
+
+          developer.log("album  ${response}");
+          developer.log("album body ${response.body}");
+
+          compute(parseAlbum, response.body);
+
+          print('Succefully registered');
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => const FetchScreen(),
+          ));
+        } else {
+          // If the server did not return a 200 OK response,
+          // then throw an exception.
+          throw Exception('Failed to load album');
+        }
+      } catch (error) {
+        developer.log("error  ${error}");
+        GlobalMethods.errorDialog(subtitle: '$error', context: context);
+        setState(() {
+          _isLoading = false;
+        });
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Album parseAlbum(String responseBody) {
+    final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+    return parsed.map<Album>((json) => Album.fromJson(json)).toList();
+  }
+
+// Request URL:https://rp.markoja.hr/api/registeruser
+// Request Method: POST
+
+// Address: "Rade Končara 53"
+// City: "Mali Mihaljevec"
+// DeviceOS: "android"
+// Email: "test1@gmail.com"
+// EmailNotificationTypeID: 1
+// LanguageID: 1
+// Name: "Nikola"
+// OIB: ""
+// Password: "Natalija_21?"
+// Phone: "0957959674"
+// State: "Croatia"
+// Surname: "Brodar"
+// Username: "test1@gmail.com"
+// Zip: "40311"
+
+// let registerModel = {
+//                 Username: uname,
+//                 Password: pwd1,
+//                 Name: namet,
+//                 Surname: surnamet,
+//                 Address: addresst,
+//                 City: cityt,
+//                 Zip: zipt,
+//                 State: countryt,
+//                 Phone: phonet,
+//                 Email: emailForSave,
+//                 OIB: oibt,
+//                 EmailNotificationTypeID: emailNotifTypeID,
+//                 LanguageID: langID,
+//                 DeviceOS: deviceOS,
+//             };
+
   void _submitFormOnRegister() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
@@ -79,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         });
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const FetchScreen(),
-        )); 
+        ));
         print('Succefully registered');
       } on FirebaseException catch (error) {
         GlobalMethods.errorDialog(
@@ -341,7 +459,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   AuthButton(
                     buttonText: 'Sign up',
                     fct: () {
-                      _submitFormOnRegister();
+                      register();
+                      // _submitFormOnRegister();
                     },
                   ),
                   const SizedBox(

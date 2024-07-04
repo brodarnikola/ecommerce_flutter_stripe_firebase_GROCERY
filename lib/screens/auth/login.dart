@@ -14,6 +14,12 @@ import '../../widgets/auth_button.dart';
 import '../../widgets/google_button.dart';
 import '../../widgets/text_widget.dart';
 
+import 'dart:convert';
+import 'dart:developer' as developer;
+import 'package:http/http.dart' as http;
+
+import 'package:grocery_app/models/album_model.dart';
+
 class LoginScreen extends StatefulWidget {
   static const routeName = '/LoginScreen';
   const LoginScreen({Key? key}) : super(key: key);
@@ -47,22 +53,84 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = true;
       });
       try {
-        await authInstance.signInWithEmailAndPassword(
-            email: _emailTextController.text.toLowerCase().trim(),
-            password: _passTextController.text.trim());
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => const FetchScreen(),
-          ),
+        Map data = {
+          'grant_type': "password",
+          'source': "mobileapp",
+          'username': _emailTextController.text.toLowerCase().trim(),
+          'password': _passTextController.text,
+          'uuid': _emailTextController.text
+              .toLowerCase()
+              .trim(), // "87f05e5908172913", // "e751f0284458d01d", // database.get("DeviceUUID"), // --> e751f0284458d01d  za account ipavelic1@gmail.com
+          'deviceOS': "android",
+          'notificationRegID':
+              "eyJt_vSrRu2sxIQkTK_GSn:APA91bGcxo7a2MvikhTta22e63R7696Z0hxv7hLbVHULjLmaSwN_OovuBRYWuBmXNtXcFHU4rmAhDHllSGWrymvgcxOvBt5axMo66CO1CI1VaMNnZF5lfXL6QM5-kJgBBAR9Y7j3up1M", //  "Ax14M1O2RbTrh_8gPn9OasVUT", // "nemaregid",  // Ax14M1O2RbTrh_8gPn9OasVUT  za account ipavelic1@gmail.com
+          'languageID': 2,
+        };
+        // developer.log(data as String);
+
+        Map<String, String> loginData = {
+          "grant_type": "password",
+          "source": "mobileapp",
+          'username': _emailTextController.text.toLowerCase().trim(),
+          'password': _passTextController.text,
+          'uuid': _emailTextController.text
+              .toLowerCase()
+              .trim(), // "87f05e5908172913", // "e751f0284458d01d", // database.get("DeviceUUID"), // --> e751f0284458d01d  za account ipavelic1@gmail.com
+          "deviceOS": "android",
+          "notificationRegID":
+              "eyJt_vSrRu2sxIQkTK_GSn%3AAPA91bGcxo7a2MvikhTta22e63R7696Z0hxv7hLbVHULjLmaSwN_OovuBRYWuBmXNtXcFHU4rm",
+          "languageID": "1"
+        };
+
+        String loginRequestText =
+            loginData.entries.map((e) => '${e.key}=${e.value}').join('&');
+
+        print('start operation logged in');
+        developer.log(data.toString());
+        developer.log(data.values.toList().join());
+
+
+        print('start operation logged in 22');
+        developer.log(loginRequestText);
+
+        // String bodyData = json.encode(data);
+        final response = await http.post(
+          Uri.parse('https://rp.markoja.hr/api/token'),
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          },
+          body: loginRequestText // bodyData,
         );
-        print('Succefully logged in');
-      } on FirebaseException catch (error) {
-        GlobalMethods.errorDialog(
-            subtitle: '${error.message}', context: context);
-        setState(() {
-          _isLoading = false;
-        });
-      } catch (error) {
+
+        if (response.statusCode == 200) {
+          // If the server did return a 200 OK response,
+          // then parse the JSON.
+
+          print('Succefully logged in');
+          developer.log("logged in  ${response}");
+          developer.log("logged in body ${response.body}");
+
+          // compute(parseForgotPassword, response.body);
+
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => const FetchScreen(),
+          ));
+        } else {
+          // If the server did not return a 200 OK response,
+          // then throw an exception.
+          throw Exception('Failed to load album');
+        }
+      }
+      // on FirebaseException catch (error) {
+      //   GlobalMethods.errorDialog(
+      //       subtitle: '${error.message}', context: context);
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      // }
+      catch (error) {
         GlobalMethods.errorDialog(subtitle: '$error', context: context);
         setState(() {
           _isLoading = false;

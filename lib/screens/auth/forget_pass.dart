@@ -1,8 +1,10 @@
+
 import 'package:card_swiper/card_swiper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocery_app/consts/firebase_consts.dart';
+import 'package:grocery_app/screens/auth/login.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 import 'package:grocery_app/services/global_methods.dart';
 import 'package:grocery_app/services/utils.dart';
@@ -11,6 +13,13 @@ import 'package:grocery_app/widgets/back_widget.dart';
 import '../../consts/contss.dart';
 import '../../widgets/auth_button.dart';
 import '../../widgets/text_widget.dart';
+
+import 'dart:convert';
+import 'dart:developer' as developer;
+import 'package:http/http.dart' as http;
+
+import 'package:grocery_app/models/album_model.dart';
+import 'package:flutter/foundation.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   static const routeName = '/ForgetPasswordScreen';
@@ -31,6 +40,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   }
 
   bool _isLoading = false;
+
   void _forgetPassFCT() async {
     if (_emailTextController.text.isEmpty ||
         !_emailTextController.text.contains("@")) {
@@ -41,8 +51,35 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         _isLoading = true;
       });
       try {
-        await authInstance.sendPasswordResetEmail(
-            email: _emailTextController.text.toLowerCase());
+          
+        Map data = {
+          'Mail': _emailTextController.text.toLowerCase().trim(),
+          'MailMessage': "Password recovery token"
+        };
+        // developer.log(data as String);
+
+        String bodyData = json.encode(data);
+        final response = await http.post(
+          Uri.parse('https://rp.markoja.hr/api/UserResetPasswordRequest'),
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Access-Control-Allow-Origin": "*"
+          },
+          body: bodyData,
+        );
+
+        if (response.statusCode == 200) {
+          // If the server did return a 200 OK response,
+          // then parse the JSON.
+
+          developer.log("forgot password  ${response}");
+          developer.log("forgot password body ${response.body}");
+
+          // compute(parseForgotPassword, response.body);
+
+          print('Succefully forgot password');
+
         Fluttertoast.showToast(
           msg: "An email has been sent to your email address",
           toastLength: Toast.LENGTH_LONG,
@@ -52,13 +89,25 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           textColor: Colors.white,
           fontSize: 16.0,
         );
-      } on FirebaseException catch (error) {
-        GlobalMethods.errorDialog(
-            subtitle: '${error.message}', context: context);
-        setState(() {
-          _isLoading = false;
-        });
-      } catch (error) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ));
+        } else {
+          // If the server did not return a 200 OK response,
+          // then throw an exception.
+          throw Exception('Failed to load album');
+        } 
+          // authInstance.sendPasswordResetEmail(
+          //   email: _emailTextController.text.toLowerCase());
+      } 
+      // on FirebaseException catch (error) {
+      //   GlobalMethods.errorDialog(
+      //       subtitle: '${error.message}', context: context);
+      //   setState(() {
+      //     _isLoading = false;
+      //   });
+      // } 
+      catch (error) {
         GlobalMethods.errorDialog(subtitle: '$error', context: context);
         setState(() {
           _isLoading = false;
@@ -69,6 +118,11 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         });
       }
     }
+  } 
+
+  Album parseForgotPassword(String responseBody) {
+    final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+    return parsed.map<Album>((json) => Album.fromJson(json)).toList();
   }
 
   @override

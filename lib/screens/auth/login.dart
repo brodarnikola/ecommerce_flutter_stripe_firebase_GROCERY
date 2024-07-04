@@ -1,11 +1,12 @@
 import 'package:card_swiper/card_swiper.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_app/consts/shared_pref_const.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
 import 'package:grocery_app/screens/auth/register.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 import 'package:grocery_app/services/global_methods.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../consts/contss.dart';
 import '../../consts/firebase_consts.dart';
@@ -14,11 +15,11 @@ import '../../widgets/auth_button.dart';
 import '../../widgets/google_button.dart';
 import '../../widgets/text_widget.dart';
 
-import 'dart:convert';
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 
 import 'package:grocery_app/models/album_model.dart';
+ 
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/LoginScreen';
@@ -53,20 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = true;
       });
       try {
-        Map data = {
-          'grant_type': "password",
-          'source': "mobileapp",
-          'username': _emailTextController.text.toLowerCase().trim(),
-          'password': _passTextController.text,
-          'uuid': _emailTextController.text
-              .toLowerCase()
-              .trim(), // "87f05e5908172913", // "e751f0284458d01d", // database.get("DeviceUUID"), // --> e751f0284458d01d  za account ipavelic1@gmail.com
-          'deviceOS': "android",
-          'notificationRegID':
-              "eyJt_vSrRu2sxIQkTK_GSn:APA91bGcxo7a2MvikhTta22e63R7696Z0hxv7hLbVHULjLmaSwN_OovuBRYWuBmXNtXcFHU4rmAhDHllSGWrymvgcxOvBt5axMo66CO1CI1VaMNnZF5lfXL6QM5-kJgBBAR9Y7j3up1M", //  "Ax14M1O2RbTrh_8gPn9OasVUT", // "nemaregid",  // Ax14M1O2RbTrh_8gPn9OasVUT  za account ipavelic1@gmail.com
-          'languageID': 2,
-        };
-        // developer.log(data as String);
 
         Map<String, String> loginData = {
           "grant_type": "password",
@@ -85,24 +72,19 @@ class _LoginScreenState extends State<LoginScreen> {
         String loginRequestText =
             loginData.entries.map((e) => '${e.key}=${e.value}').join('&');
 
-        print('start operation logged in');
-        developer.log(data.toString());
-        developer.log(data.values.toList().join());
-
-
         print('start operation logged in 22');
         developer.log(loginRequestText);
 
         // String bodyData = json.encode(data);
-        final response = await http.post(
-          Uri.parse('https://rp.markoja.hr/api/token'),
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Access-Control-Allow-Origin": "*"
-          },
-          body: loginRequestText // bodyData,
-        );
+        final response =
+            await http.post(Uri.parse('https://rp.markoja.hr/api/token'),
+                headers: {
+                  "Content-Type": "application/json",
+                  "Accept": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+                },
+                body: loginRequestText // bodyData,
+                );
 
         if (response.statusCode == 200) {
           // If the server did return a 200 OK response,
@@ -111,6 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
           print('Succefully logged in');
           developer.log("logged in  ${response}");
           developer.log("logged in body ${response.body}");
+
+          saveData();
 
           // compute(parseForgotPassword, response.body);
 
@@ -141,6 +125,11 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     }
+  }
+
+  void saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(isLoggedIn, true);
   }
 
   @override

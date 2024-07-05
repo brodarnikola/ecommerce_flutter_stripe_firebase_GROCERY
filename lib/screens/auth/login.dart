@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/consts/shared_pref_const.dart';
 import 'package:grocery_app/models/login_model.dart';
 import 'package:grocery_app/providers/shared_pref_provider.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';

@@ -8,6 +8,7 @@ import 'package:grocery_app/consts/firebase_consts.dart';
 import 'package:grocery_app/providers/cart_provider.dart';
 import 'package:grocery_app/providers/orders_provider.dart';
 import 'package:grocery_app/providers/shared_pref_provider.dart';
+import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:grocery_app/providers/wishlist_provider.dart';
 import 'package:grocery_app/screens/auth/login.dart';
 import 'package:grocery_app/screens/btm_bar.dart';
@@ -34,6 +35,9 @@ class _FetchScreenState extends State<FetchScreen> {
       final sharedPrefState =
           Provider.of<SharedPrefsProvider>(context, listen: false);
 
+      final vehiclesProvider =
+          Provider.of<VehiclesProvider>(context, listen: false);
+
       final productsProvider =
           Provider.of<ProductsProvider>(context, listen: false);
       final cartProvider = Provider.of<CartProvider>(context, listen: false);
@@ -57,6 +61,9 @@ class _FetchScreenState extends State<FetchScreen> {
 
       if(  
         sharedPrefState.getIsLoggedInValue == true  ) {
+
+        await vehiclesProvider.fetchVehicles();
+
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (ctx) => const BottomBarScreen(),
         ));

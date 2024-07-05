@@ -55,7 +55,8 @@ class _FetchScreenState extends State<FetchScreen> {
  
       print("Is logged in user AWESOME: ${sharedPrefState.isLoggedInUser()}");
 
-      if( await getIsUserLoggedIn() ) {
+      if(  
+        sharedPrefState.getIsLoggedInValue == true  ) {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (ctx) => const BottomBarScreen(),
         ));

@@ -40,11 +40,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  SharedPrefsProvider themeChangeProvider = SharedPrefsProvider();
+  SharedPrefsProvider sharedPrefProvider = SharedPrefsProvider();
 
   void getCurrentAppTheme() async {
-    themeChangeProvider.setDarkTheme =
-        await themeChangeProvider.darkThemePrefs.getTheme();
+    sharedPrefProvider.setDarkTheme =
+        await sharedPrefProvider.darkThemePrefs.getTheme();
+
+    if( await sharedPrefProvider.isLoggedInUser() ) {
+       // call here only once when the app starts and setup usernmae and email
+
+    }    
   }
 
   @override
@@ -79,7 +84,7 @@ class _MyAppState extends State<MyApp> {
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(create: (_) {
-                return themeChangeProvider;
+                return sharedPrefProvider;
               }),
               ChangeNotifierProvider(
                 create: (_) => ProductsProvider(),

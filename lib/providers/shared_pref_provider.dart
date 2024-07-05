@@ -26,7 +26,7 @@ class SharedPrefsProvider with ChangeNotifier {
  
 
   set setIsLoggedIn(bool value) {
-    // _isLoggedIn = value;
+    _isLoggedIn = value;
     darkThemePrefs.setIsLoggedIn(value);
     notifyListeners();
   }

@@ -144,7 +144,7 @@ SharedPreferences prefs = await SharedPreferences.getInstance();
                     ),
                     children: <TextSpan>[
                       TextSpan(
-                          text: _name ?? 'user',
+                          text: sharedPrefState.getUsername ?? 'user' ,// _name ?? 'user',
                           style: TextStyle(
                             color: color,
                             fontSize: 25,
@@ -158,7 +158,7 @@ SharedPreferences prefs = await SharedPreferences.getInstance();
                   height: 5,
                 ),
                 TextWidget(
-                  text: _email == null ? 'Email' : _email!,
+                  text: sharedPrefState.getEmail ?? 'Email' ,// _email == null ? 'Email' : _email!,
                   color: color,
                   textSize: 18,
                   // isTitle: true,

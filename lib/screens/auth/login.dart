@@ -22,7 +22,7 @@ import '../../widgets/text_widget.dart';
 
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
- 
+
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
@@ -150,9 +150,19 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void saveData(String responseBody) async {
-    final sharedPrefState = Provider.of<SharedPrefsProvider>(context, listen: false);
+    
+    final sharedPrefState =
+        Provider.of<SharedPrefsProvider>(context, listen: false);
+    
+    final Map<String, dynamic> parsed = jsonDecode(responseBody);
+    final String firstName = parsed['firstName'];
+    final String lastName = parsed['lastName'];
+    final String email = parsed['email'];
+
     setState(() {
       sharedPrefState.setIsLoggedIn = true;
+      sharedPrefState.setUsername = "$firstName $lastName";
+      sharedPrefState.setEmail = email;
     });
     // SharedPreferences prefs = await SharedPreferences.getInstance();
     // await prefs.setBool(isLoggedIn, true);

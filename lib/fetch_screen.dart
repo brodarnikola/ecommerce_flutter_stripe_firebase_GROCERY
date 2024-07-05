@@ -86,17 +86,7 @@ class _FetchScreenState extends State<FetchScreen> {
       // ));
     });
     super.initState();
-  }
-
-  Future<bool> getIsUserLoggedIn() async {
-    SharedPrefs sharedPrefs = SharedPrefs();
-   
-    print("Is logged in user 11: ${await sharedPrefs.getIsLoggedIn()}");
-    if( await sharedPrefs.getIsLoggedIn() == true) { 
-      return true;
-    }
-    return false;
-  }
+  } 
 
   @override
   Widget build(BuildContext context) {

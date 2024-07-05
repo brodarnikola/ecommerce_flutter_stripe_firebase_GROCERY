@@ -48,7 +48,8 @@ class _MyAppState extends State<MyApp> {
 
     if( await sharedPrefProvider.isLoggedInUser() ) {
        // call here only once when the app starts and setup usernmae and email
-
+      sharedPrefProvider.getUsernameValue();
+      sharedPrefProvider.getEmailValue();
     }    
   }
 

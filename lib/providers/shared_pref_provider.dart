@@ -12,11 +12,11 @@ class SharedPrefsProvider with ChangeNotifier {
    bool _isLoggedIn = false;
   bool get getIsLoggedInValue => _isLoggedIn;
 
-  // String _usernameSp = "";
-  // String get getUsername => _usernameSp;
+  String _usernameSp = "";
+  String get getUsername => _usernameSp;
 
-  // String _emailSp = "";
-  // String get getEmail => _emailSp;
+  String _emailSp = "";
+  String get getEmail => _emailSp;
 
   set setDarkTheme(bool value) {
     _darkTheme = value;
@@ -38,15 +38,25 @@ class SharedPrefsProvider with ChangeNotifier {
   }
 
   set setUsername(String value) {
-    // _usernameSp = value;
+    _usernameSp = value;
     darkThemePrefs.setUsername(value);
     notifyListeners();
   }
 
+  void getUsernameValue() async {
+    String usernameValue = await darkThemePrefs.getUsername();
+    _usernameSp = usernameValue; 
+  }
+
   set setEmail(String value) {
-    // _emailSp = value;
+    _emailSp = value;
     darkThemePrefs.setEmail(value);
     notifyListeners();
+  }
+
+  void getEmailValue() async {
+    String emailValue = await darkThemePrefs.getEmail();
+    _emailSp = emailValue; 
   }
 
 

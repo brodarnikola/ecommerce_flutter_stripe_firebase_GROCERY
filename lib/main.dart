@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:grocery_app/inner_screens/on_sale_screen.dart';
-import 'package:grocery_app/providers/dark_theme_provider.dart';
+import 'package:grocery_app/providers/shared_pref_provider.dart';
 import 'package:grocery_app/providers/orders_provider.dart';
 import 'package:grocery_app/providers/products_provider.dart';
 import 'package:grocery_app/providers/viewed_prod_provider.dart';
@@ -40,7 +40,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  DarkThemeProvider themeChangeProvider = DarkThemeProvider();
+  SharedPrefsProvider themeChangeProvider = SharedPrefsProvider();
 
   void getCurrentAppTheme() async {
     themeChangeProvider.setDarkTheme =
@@ -97,7 +97,7 @@ class _MyAppState extends State<MyApp> {
                 create: (_) => OrdersProvider(),
               ),
             ],
-            child: Consumer<DarkThemeProvider>(
+            child: Consumer<SharedPrefsProvider>(
                 builder: (context, themeProvider, child) {
               return MaterialApp(
                   debugShowCheckedModeBanner: false,

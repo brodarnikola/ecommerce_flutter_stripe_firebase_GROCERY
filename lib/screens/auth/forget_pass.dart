@@ -1,4 +1,3 @@
-
 import 'package:card_swiper/card_swiper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +50,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         _isLoading = true;
       });
       try {
-          
         Map data = {
           'Mail': _emailTextController.text.toLowerCase().trim(),
           'MailMessage': "Password recovery token"
@@ -80,33 +78,36 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
           print('Succefully forgot password');
 
-        Fluttertoast.showToast(
-          msg: "An email has been sent to your email address",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.grey.shade600,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
+          Fluttertoast.showToast(
+            msg: "An email has been sent to your email address",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.grey.shade600,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => const LoginScreen(),
           ));
         } else {
           // If the server did not return a 200 OK response,
           // then throw an exception.
-          throw Exception('Failed to load album');
-        } 
-          // authInstance.sendPasswordResetEmail(
-          //   email: _emailTextController.text.toLowerCase());
-      } 
+          GlobalMethods.errorDialog(subtitle: 'Wrong email', context: context);
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        // authInstance.sendPasswordResetEmail(
+        //   email: _emailTextController.text.toLowerCase());
+      }
       // on FirebaseException catch (error) {
       //   GlobalMethods.errorDialog(
       //       subtitle: '${error.message}', context: context);
       //   setState(() {
       //     _isLoading = false;
       //   });
-      // } 
+      // }
       catch (error) {
         GlobalMethods.errorDialog(subtitle: '$error', context: context);
         setState(() {
@@ -118,7 +119,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         });
       }
     }
-  } 
+  }
 
   Album parseForgotPassword(String responseBody) {
     final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();

@@ -3,7 +3,7 @@ import 'package:grocery_app/inner_screens/cat_screen.dart';
 import 'package:grocery_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/dark_theme_provider.dart';
+import '../providers/shared_pref_provider.dart';
 
 class CategoriesWidget extends StatelessWidget {
   const CategoriesWidget(
@@ -17,7 +17,7 @@ class CategoriesWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Size size = MediaQuery.of(context).size;
-    final themeState = Provider.of<DarkThemeProvider>(context);
+    final themeState = Provider.of<SharedPrefsProvider>(context);
     double screenWidth = MediaQuery.of(context).size.width;
     final Color color = themeState.getDarkTheme ? Colors.white : Colors.black;
     return InkWell(

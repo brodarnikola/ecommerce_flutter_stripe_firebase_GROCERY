@@ -1,11 +1,16 @@
+import 'dart:math';
+
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/consts/shared_pref_const.dart';
+import 'package:grocery_app/models/login_model.dart';
+import 'package:grocery_app/providers/shared_pref_provider.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
 import 'package:grocery_app/screens/auth/register.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 import 'package:grocery_app/services/global_methods.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../consts/contss.dart';
@@ -17,9 +22,9 @@ import '../../widgets/text_widget.dart';
 
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
-
-import 'package:grocery_app/models/album_model.dart';
  
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/LoginScreen';
@@ -54,58 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = true;
       });
       try {
-
-        Map<String, String> loginData = {
-          "grant_type": "password",
-          "source": "mobileapp",
-          'username': _emailTextController.text.toLowerCase().trim(),
-          'password': _passTextController.text,
-          'uuid': _emailTextController.text
-              .toLowerCase()
-              .trim(), // "87f05e5908172913", // "e751f0284458d01d", // database.get("DeviceUUID"), // --> e751f0284458d01d  za account ipavelic1@gmail.com
-          "deviceOS": "android",
-          "notificationRegID":
-              "eyJt_vSrRu2sxIQkTK_GSn%3AAPA91bGcxo7a2MvikhTta22e63R7696Z0hxv7hLbVHULjLmaSwN_OovuBRYWuBmXNtXcFHU4rm",
-          "languageID": "1"
-        };
-
-        String loginRequestText =
-            loginData.entries.map((e) => '${e.key}=${e.value}').join('&');
-
-        print('start operation logged in 22');
-        developer.log(loginRequestText);
-
-        // String bodyData = json.encode(data);
-        final response =
-            await http.post(Uri.parse('https://rp.markoja.hr/api/token'),
-                headers: {
-                  "Content-Type": "application/json",
-                  "Accept": "application/json",
-                  "Access-Control-Allow-Origin": "*"
-                },
-                body: loginRequestText // bodyData,
-                );
-
-        if (response.statusCode == 200) {
-          // If the server did return a 200 OK response,
-          // then parse the JSON.
-
-          print('Succefully logged in');
-          developer.log("logged in  ${response}");
-          developer.log("logged in body ${response.body}");
-
-          saveData();
-
-          // compute(parseForgotPassword, response.body);
-
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => const FetchScreen(),
-          ));
-        } else {
-          // If the server did not return a 200 OK response,
-          // then throw an exception.
-          throw Exception('Failed to load album');
-        }
+        loginUser();
       }
       // on FirebaseException catch (error) {
       //   GlobalMethods.errorDialog(
@@ -115,6 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
       //   });
       // }
       catch (error) {
+        print('error in login 2 $error');
         GlobalMethods.errorDialog(subtitle: '$error', context: context);
         setState(() {
           _isLoading = false;
@@ -127,9 +82,82 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void saveData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(isLoggedIn, true);
+  Future<void> loginUser() async {
+    Map<String, String> loginData = {
+      "grant_type": "password",
+      "source": "mobileapp",
+      'username': _emailTextController.text.toLowerCase().trim(),
+      'password': _passTextController.text,
+      'uuid': _emailTextController.text
+          .toLowerCase()
+          .trim(), // "87f05e5908172913", // "e751f0284458d01d", // database.get("DeviceUUID"), // --> e751f0284458d01d  za account ipavelic1@gmail.com
+      "deviceOS": "android",
+      "notificationRegID":
+          "eyJt_vSrRu2sxIQkTK_GSn%3AAPA91bGcxo7a2MvikhTta22e63R7696Z0hxv7hLbVHULjLmaSwN_OovuBRYWuBmXNtXcFHU4rm",
+      "languageID": "1"
+    };
+
+    String loginRequestText =
+        loginData.entries.map((e) => '${e.key}=${e.value}').join('&');
+
+    print('start operation logged in 22');
+    developer.log(loginRequestText);
+
+    // String bodyData = json.encode(data);
+    final response =
+        await http.post(Uri.parse('https://rp.markoja.hr/api/token'),
+            headers: {
+              "Content-Type": "application/json",
+              "Accept": "application/json",
+              "Access-Control-Allow-Origin": "*"
+            },
+            body: loginRequestText // bodyData,
+            );
+
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+
+      print('Succefully logged in');
+      developer.log("logged in  ${response}");
+      developer.log("logged in body ${response.body}");
+
+      // compute(parseLogin, response.body);
+
+      saveData(response.body);
+
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const FetchScreen(),
+      ));
+    } else {
+      print('error in login 1');
+      GlobalMethods.errorDialog(
+          subtitle: 'Wrong username or password', context: context);
+      setState(() {
+        _isLoading = false;
+      });
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      // throw Exception('Failed to load album');
+    }
+  }
+
+  User parseLogin(String responseBody) {
+    developer.log("start computing login response");
+    final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+    developer.log(parsed);
+    return parsed.map<User>((json) => User.fromJson(json)).toList();
+  }
+
+  void saveData(String responseBody) async {
+    final sharedPrefState = Provider.of<SharedPrefsProvider>(context, listen: false);
+    setState(() {
+      sharedPrefState.setIsLoggedIn = true;
+    });
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // await prefs.setBool(isLoggedIn, true);
+    // await prefs.setString(usernameSP, username);
+    // await prefs.setString(emailSP, email);
   }
 
   @override

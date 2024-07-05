@@ -5,12 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:grocery_app/consts/contss.dart';
 import 'package:grocery_app/consts/firebase_consts.dart';
-import 'package:grocery_app/consts/shared_pref_const.dart';
 import 'package:grocery_app/providers/cart_provider.dart';
 import 'package:grocery_app/providers/orders_provider.dart';
+import 'package:grocery_app/providers/shared_pref_provider.dart';
 import 'package:grocery_app/providers/wishlist_provider.dart';
 import 'package:grocery_app/screens/auth/login.dart';
 import 'package:grocery_app/screens/btm_bar.dart';
+import 'package:grocery_app/services/shared_prefs.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -29,6 +30,10 @@ class _FetchScreenState extends State<FetchScreen> {
   void initState() {
     images.shuffle();
     Future.delayed(const Duration(microseconds: 5), () async {
+
+      final sharedPrefState =
+          Provider.of<SharedPrefsProvider>(context, listen: false);
+
       final productsProvider =
           Provider.of<ProductsProvider>(context, listen: false);
       final cartProvider = Provider.of<CartProvider>(context, listen: false);
@@ -47,20 +52,32 @@ class _FetchScreenState extends State<FetchScreen> {
         await wishlistProvider.fetchWishlist();
         await orderProvider.fetchOrders();
       }
+ 
+      print("Is logged in user AWESOME: ${sharedPrefState.isLoggedInUser()}");
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-  // bool? isLoggedIn = prefs.getBool(isLoggedIn as String);
-  
-    if(prefs.getBool(isLoggedIn) == true) {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (ctx) => const BottomBarScreen(),
-      ));
-    }
-    else {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (ctx) => const LoginScreen(),
-      ));
-    }
+      if( await getIsUserLoggedIn() ) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (ctx) => const BottomBarScreen(),
+        ));
+      } else {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (ctx) => const LoginScreen(),
+        ));
+      } 
+
+      //   SharedPreferences prefs = await SharedPreferences.getInstance();
+      // bool? isLoggedIn = prefs.getBool(isLoggedIn as String);
+
+      //   if(prefs.getBool(isLoggedIn) == true) {
+      //     Navigator.of(context).pushReplacement(MaterialPageRoute(
+      //       builder: (ctx) => const BottomBarScreen(),
+      //     ));
+      //   }
+      //   else {
+      //     Navigator.of(context).pushReplacement(MaterialPageRoute(
+      //       builder: (ctx) => const LoginScreen(),
+      //     ));
+      //   }
 
       // if (!mounted) return;
       // Navigator.of(context).pushReplacement(MaterialPageRoute(
@@ -68,6 +85,16 @@ class _FetchScreenState extends State<FetchScreen> {
       // ));
     });
     super.initState();
+  }
+
+  Future<bool> getIsUserLoggedIn() async {
+    SharedPrefs sharedPrefs = SharedPrefs();
+   
+    print("Is logged in user 11: ${await sharedPrefs.getIsLoggedIn()}");
+    if( await sharedPrefs.getIsLoggedIn() == true) { 
+      return true;
+    }
+    return false;
   }
 
   @override

@@ -9,7 +9,7 @@ import 'package:grocery_app/screens/user.dart';
 import 'package:grocery_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/dark_theme_provider.dart';
+import '../providers/shared_pref_provider.dart';
 import '../providers/cart_provider.dart';
 import 'cart/cart_screen.dart';
 
@@ -48,7 +48,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeState = Provider.of<DarkThemeProvider>(context);
+    final themeState = Provider.of<SharedPrefsProvider>(context);
     bool isDark = themeState.getDarkTheme;
     return Scaffold(
       // appBar: AppBar(

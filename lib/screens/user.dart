@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:developer';
+import 'dart:developer'; 
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_app/consts/firebase_consts.dart';
+import 'package:grocery_app/consts/shared_pref_const.dart';
 import 'package:grocery_app/models/album_model.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
@@ -17,10 +18,11 @@ import 'package:grocery_app/services/global_methods.dart';
 import 'package:grocery_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/dark_theme_provider.dart';
+import '../providers/shared_pref_provider.dart';
 import 'auth/login.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
@@ -43,9 +45,25 @@ class _UserScreenState extends State<UserScreen> {
   String? address;
   bool _isLoading = false;
   final User? user = authInstance.currentUser;
+
+  bool correctUser = false;
+
+  Future<void> isLoggedInUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("Is logged in user 11: ${prefs.getBool(isLoggedIn) == true}");
+    if(prefs.getBool(isLoggedIn) == true) { 
+      correctUser = true;
+    }
+    else { 
+      correctUser = false;
+    }
+    print("Is logged in user 22: $correctUser");
+  }
+
   @override
   void initState() {
     getUserData();
+    // isLoggedInUser();
     super.initState();
   }
 
@@ -60,18 +78,31 @@ class _UserScreenState extends State<UserScreen> {
       return;
     }
     try {
-      String uid = user!.uid;
 
-      final DocumentSnapshot userDoc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      if (userDoc == null) {
-        return;
-      } else {
-        _email = userDoc.get('email');
-        _name = userDoc.get('name');
-        address = userDoc.get('shipping-address');
-        _addressTextController.text = userDoc.get('shipping-address');
-      }
+      // String uid = user!.uid;
+
+      // final DocumentSnapshot userDoc =
+      //     await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      // if (userDoc == null) {
+      //   return;
+      // } else {
+        
+      //   _email = userDoc.get('email');
+      //   _name = userDoc.get('name');
+      //   address = userDoc.get('shipping-address');
+      //   _addressTextController.text = userDoc.get('shipping-address');
+      // }
+
+
+SharedPreferences prefs = await SharedPreferences.getInstance();
+    print("Is logged in user 11: ${prefs.getBool(isLoggedIn) == true}");
+    if(prefs.getBool(isLoggedIn) == true) { 
+      correctUser = true;
+    }
+    else { 
+      correctUser = false;
+    }
+ 
     } catch (error) {
       setState(() {
         _isLoading = false;
@@ -87,8 +118,8 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeState = Provider.of<DarkThemeProvider>(context);
-    final Color color = themeState.getDarkTheme ? Colors.white : Colors.black;
+    final sharedPrefState = Provider.of<SharedPrefsProvider>(context);
+    final Color color = sharedPrefState.getDarkTheme ? Colors.white : Colors.black;
     return Scaffold(
         body: LoadingManager(
       isLoading: _isLoading,
@@ -193,23 +224,23 @@ class _UserScreenState extends State<UserScreen> {
                 ),
                 SwitchListTile(
                   title: TextWidget(
-                    text: themeState.getDarkTheme ? 'Dark mode' : 'Light mode',
+                    text: sharedPrefState.getDarkTheme ? 'Dark mode' : 'Light mode',
                     color: color,
                     textSize: 18,
                     // isTitle: true,
                   ),
-                  secondary: Icon(themeState.getDarkTheme
+                  secondary: Icon(sharedPrefState.getDarkTheme
                       ? Icons.dark_mode_outlined
                       : Icons.light_mode_outlined),
                   onChanged: (bool value) {
                     setState(() {
-                      themeState.setDarkTheme = value;
+                      sharedPrefState.setDarkTheme = value;
                     });
                   },
-                  value: themeState.getDarkTheme,
+                  value: sharedPrefState.getDarkTheme,
                 ),
                 _listTiles(
-                  title: user == null ? 'Login' : 'Logout',
+                  title: sharedPrefState.getIsLoggedInValue == true ? 'Logout' : 'Login',
                   icon: user == null ? IconlyLight.login : IconlyLight.logout,
                   onPressed: () {
                     if (user == null) {
@@ -243,8 +274,7 @@ class _UserScreenState extends State<UserScreen> {
         ),
       ),
     ));
-  }
-
+  } 
 
   Future<Album> fetchAlbum() async {
   final response = await http

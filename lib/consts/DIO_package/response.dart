@@ -1,21 +1,42 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:grocery_app/consts/DIO_package/dio_package.dart';
 import 'package:grocery_app/models/album_model.dart';
 
 class UserNetworkService {
-  Future<ApiResponse<List<UserModel>>> getListOfUsers() async {
+  Future<ApiResponse<List<Album>>> getListOfUsers() async {
     try {
-      var res = await Api().get("albums/2",
+      var res = await Api().get("/dasds312albums",
           queryParameters: {}, options: null, addRequestInterceptor: false);
-      var apiRes = ApiResponse<List<UserModel>>.fromJson(
-          res.data,
-          (p) => (p as List)
-              .map((e) => UserModel.fromJson(e as Map<String, dynamic>))
-              .toList());
+
+      var albumList = Album.fromJsonList(res?.data);
+
+      // print("album body 00");
+      // var albumList = Album.fromJsonList([res.data]);
+      albumList.forEach((album) {
+        print(
+            'userId: ${album.userId}, id: ${album.id}, title: ${album.title}');
+      });
+
+      print("album body 11 ${albumList}");
+      print("album body 22 ${albumList.join("\n")}");
+      var apiRes = ApiResponse<List<Album>>(
+        success: true,
+        message: "Success",
+        data: albumList,
+      );
+
       return apiRes;
     } catch (err) {
-      print(err);
+      print("22 Catched exception is $err");
+      // if (err is NotFoundException) {
+      //   print("DioError: ${err.message}");
+      //   print("DioError response data: ${err.response?.data}");
+      //   print("DioError response status code: ${err.response?.statusCode}");
+      // } else {
+      //   print("Catched exception is $err");
+      // }
+      // print(err);
       throw Exception(err.toString());
     }
   }
@@ -29,8 +50,8 @@ class UserNetworkService {
           cancelToken: null,
           onReceiveProgress: (p0, p1) => {});
 
-      print("album  ${res.data}"); 
-      var correctData = Album.fromJson(res.data);
+      print("album  ${res?.data}");
+      var correctData = Album.fromJson(res?.data);
 
       print("album body 22 ${correctData}");
       var apiRes = ApiResponse<Album>(
@@ -40,9 +61,8 @@ class UserNetworkService {
       );
 
       return apiRes;
- 
     } catch (err) {
-      print(err);
+      print("Catched exception is $err");
       throw Exception(err.toString());
     }
   }

@@ -49,7 +49,7 @@ class Api {
   }
 
   ///[GET] We will use this method inorder to process get requests
-  Future<Response> get(
+  Future<Response?> get(
     String path, {
     Map<String, dynamic>? queryParameters,
     Options? options,
@@ -57,17 +57,46 @@ class Api {
     void Function(int, int)? onReceiveProgress,
     bool addRequestInterceptor = true,
   }) async {
-    print("GETTING API FROM : ${this.dio.options.baseUrl + path}");
-    if (addRequestInterceptor) {
-      dio.interceptors
-          .add(RequestInterceptor(dio, apiKey: apiKey, token: token));
+    try {
+      print("GETTING API FROM : ${this.dio.options.baseUrl + path}");
+      if (addRequestInterceptor) {
+        dio.interceptors
+            .add(RequestInterceptor(dio, apiKey: apiKey, token: token));
+      }
+      print("QUERY PARAMS=>${queryParameters}");
+      return await dio.get(this.dio.options.baseUrl + path,
+          onReceiveProgress: onReceiveProgress,
+          cancelToken: cancelToken,
+          options: options,
+          queryParameters: queryParameters);
+    } on DioException catch (e) {
+
+      if (e.type == DioExceptionType.badResponse) {
+        if (e.response?.statusCode == 404) {
+          print("404 error: ${e.response?.data}");
+          throw NotFoundException(e.requestOptions);
+        } else {
+          print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
+        }
+      } else if (e.type == DioExceptionType.connectionError) {
+        if (e.error is SocketException) {
+          print("No internet connection");
+        } else {
+          print("Other error: ${e.message}");
+        }
+      } else {
+        print("Unexpected error: ${e.message}");
+      }
+      throw e;
+
+      // print("DioError in get request: ${dioError.message}");
+      // // Handle DioError here or rethrow
+      // throw dioError;
+    } catch (err) {
+      print("Error in get request: $err");
+      // Handle other exceptions here or rethrow
+      throw err;
     }
-    print("QUERY PARAMS=>${queryParameters}");
-    return await dio.get(this.dio.options.baseUrl + path,
-        onReceiveProgress: onReceiveProgress,
-        cancelToken: cancelToken,
-        options: options,
-        queryParameters: queryParameters);
   }
 
   ///[POST] We will use this method inorder to process post requests
@@ -113,12 +142,11 @@ class ErrorInterceptor extends Interceptor {
         throw SendTimeOutException(err.requestOptions);
       case DioExceptionType.receiveTimeout:
         throw ReceiveTimeOutException(err.requestOptions);
-      case DioExceptionType.badCertificate: 
+      case DioExceptionType.badCertificate:
         // TODO: Handle this case.
-        print("DioExceptionType Bad certificate"); 
+        print("DioExceptionType Bad certificate");
         break;
       case DioExceptionType.badResponse:
-
         print("STATUS CODE : ${err.response?.statusCode}");
         print("${err.response?.data}");
         switch (err.response?.statusCode) {
@@ -127,7 +155,11 @@ class ErrorInterceptor extends Interceptor {
           case 401:
             throw UnauthorizedException(err.requestOptions);
           case 404:
-            throw NotFoundException(err.requestOptions);
+            print("DioExceptionType connectionError");
+            // throw NotFoundException(err.requestOptions).toString();
+            break;
+          // return NotFoundException(err.requestOptions);
+          // throw NotFoundException(err.requestOptions);
           case 409:
             throw ConflictException(err.requestOptions);
           case 500:
@@ -135,17 +167,17 @@ class ErrorInterceptor extends Interceptor {
         }
         break;
 
-      case DioExceptionType.cancel: 
-        print("DioExceptionType Cancel"); 
+      case DioExceptionType.cancel:
+        print("DioExceptionType Cancel");
         break;
       case DioExceptionType.connectionError:
-        print("DioExceptionType connectionError"); 
+        print("DioExceptionType connectionError");
         break;
       case DioExceptionType.unknown:
-        print("DioExceptionType unknown"); 
+        print("DioExceptionType unknown");
         break;
     }
-  } 
+  }
 }
 
 class RequestInterceptor extends Interceptor {

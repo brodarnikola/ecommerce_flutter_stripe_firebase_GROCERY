@@ -7,7 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_app/consts/DIO_package/response.dart';
-import 'package:grocery_app/consts/firebase_consts.dart'; 
+import 'package:grocery_app/consts/firebase_consts.dart';
 import 'package:grocery_app/models/album_model.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
@@ -46,7 +46,7 @@ class _UserScreenState extends State<UserScreen> {
   bool _isLoading = false;
   final User? user = authInstance.currentUser;
 
-  bool correctUser = false; 
+  bool correctUser = false;
 
   @override
   void initState() {
@@ -79,7 +79,6 @@ class _UserScreenState extends State<UserScreen> {
       //   address = userDoc.get('shipping-address');
       //   _addressTextController.text = userDoc.get('shipping-address');
       // }
- 
     } catch (error) {
       setState(() {
         _isLoading = false;
@@ -273,27 +272,32 @@ class _UserScreenState extends State<UserScreen> {
     ));
   }
 
-  Future<Album?> fetchAlbum2() async {
+  Future<List<Album>?> fetchAlbum2() async {
+    try {
+      var res = await UserNetworkService().getListOfUsers();
+      if (res.success && res.data != null) { 
+         res.data.forEach((album) {
+        print(' 1111 userId: ${album.userId}, id: ${album.id}, title: ${album.title}');
+      });
 
-     try {
-      var res = await UserNetworkService().getListOfUser2();
-      if ( res.success && res.data != null) {
-         print("data 22: ${res.data.toString()}");
+        // how to print out data that is inside this variable res.data
+
+        //  var correctData1 = Album.fromJsonList(res.data as List<dynamic>);
+        //   print("data 44: ${correctData1}");
+
         //  var correctData = Album.fromJson(res.data as Map<String, dynamic>);
         //  print("correctData 22: ${correctData}");
         //  return correctData;
         return res.data;
-      } else { 
-        GlobalMethods.errorDialog(subtitle: '${res.data}', context: context);
-         return null;
+      } else {
+
+        GlobalMethods.errorDialog(subtitle: '${res.data}', context: context); 
       }
     } on Exception catch (err) {
-      print("error 1: $err");
+      print("Eception error 1: $err");
       GlobalMethods.errorDialog(subtitle: 'err $err', context: context);
-       return null;
-    } 
-    return null;
-
+      return null;
+    }
   }
 
   Future<Album> fetchAlbum() async {

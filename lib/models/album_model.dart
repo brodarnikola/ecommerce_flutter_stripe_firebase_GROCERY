@@ -18,6 +18,10 @@ class Album {
         'id': id,
         'title': title,
       };
+
+  static List<Album> fromJsonList(List<dynamic> jsonList) {
+    return jsonList.map((item) => Album.fromJson(item as Map<String, dynamic>)).toList();
+  }
 }
 
 // class Album {

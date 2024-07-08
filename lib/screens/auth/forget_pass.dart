@@ -9,7 +9,7 @@ import 'package:grocery_app/services/global_methods.dart';
 import 'package:grocery_app/services/utils.dart';
 import 'package:grocery_app/widgets/back_widget.dart';
 
-import '../../consts/contss.dart';
+import '../../consts/constants.dart';
 import '../../widgets/auth_button.dart';
 import '../../widgets/text_widget.dart';
 
@@ -58,7 +58,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
 
         String bodyData = json.encode(data);
         final response = await http.post(
-          Uri.parse('https://rp.markoja.hr/api/UserResetPasswordRequest'),
+          Uri.parse('${Constants.BASE_URL}/UserResetPasswordRequest'),
           headers: {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -138,12 +138,12 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             Swiper(
               itemBuilder: (BuildContext context, int index) {
                 return Image.asset(
-                  Constss.authImagesPaths[index],
+                  Constants.authImagesPaths[index],
                   fit: BoxFit.cover,
                 );
               },
               autoplay: true,
-              itemCount: Constss.authImagesPaths.length,
+              itemCount: Constants.authImagesPaths.length,
 
               // control: const SwiperControl(),
             ),

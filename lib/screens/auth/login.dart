@@ -12,7 +12,7 @@ import 'package:grocery_app/services/global_methods.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../consts/contss.dart';
+import '../../consts/constants.dart';
 import '../../consts/firebase_consts.dart';
 import '../../fetch_screen.dart';
 import '../../widgets/auth_button.dart';
@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // String bodyData = json.encode(data);
     final response =
-        await http.post(Uri.parse('https://rp.markoja.hr/api/token'),
+        await http.post(Uri.parse('${Constants.BASE_URL}/token'),
             headers: {
               "Content-Type": "application/json",
               "Accept": "application/json",
@@ -180,12 +180,12 @@ class _LoginScreenState extends State<LoginScreen> {
             autoplayDelay: 8000,
             itemBuilder: (BuildContext context, int index) {
               return Image.asset(
-                Constss.authImagesPaths[index],
+                Constants.authImagesPaths[index],
                 fit: BoxFit.cover,
               );
             },
             autoplay: true,
-            itemCount: Constss.authImagesPaths.length,
+            itemCount: Constants.authImagesPaths.length,
           ),
           Container(
             color: Colors.black.withOpacity(0.7),

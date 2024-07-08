@@ -1,5 +1,5 @@
 
-class Constss {
+class Constants {
   static final List<String> offerImages = [
     'assets/images/offres/Offer1.jpg',
     'assets/images/offres/Offer2.jpg',
@@ -15,5 +15,7 @@ class Constss {
     'assets/images/landing/store.jpg',
     'assets/images/landing/vergtablebg.jpg',
   ];
+
+  static const BASE_URL = 'https://rp.markoja.hr/api';
 
 }

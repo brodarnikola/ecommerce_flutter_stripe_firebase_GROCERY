@@ -7,7 +7,7 @@ import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_app/screens/auth/login.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 
-import '../../consts/contss.dart';
+import '../../consts/constants.dart';
 import '../../consts/firebase_consts.dart';
 import '../../fetch_screen.dart';
 import '../../services/global_methods.dart';
@@ -88,7 +88,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
         String bodyData = json.encode(data);
         final response = await http.post(
-          Uri.parse('https://rp.markoja.hr/api/registeruser'),
+          Uri.parse('${Constants.BASE_URL}/registeruser'),
           headers: {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -234,12 +234,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               itemBuilder: (BuildContext context, int index) {
                 return Image.asset(
-                  Constss.authImagesPaths[index],
+                  Constants.authImagesPaths[index],
                   fit: BoxFit.cover,
                 );
               },
               autoplay: true,
-              itemCount: Constss.authImagesPaths.length,
+              itemCount: Constants.authImagesPaths.length,
 
               // control: const SwiperControl(),
             ),

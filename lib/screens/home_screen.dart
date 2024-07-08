@@ -7,7 +7,7 @@ import 'package:grocery_app/services/utils.dart';
 import 'package:grocery_app/widgets/text_widget.dart';
 import 'package:provider/provider.dart';
 
-import '../consts/contss.dart';
+import '../consts/constants.dart';
 import '../models/products_model.dart';
 import '../providers/products_provider.dart';
 import '../services/global_methods.dart';
@@ -40,12 +40,12 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Swiper(
                 itemBuilder: (BuildContext context, int index) {
                   return Image.asset(
-                    Constss.offerImages[index],
+                    Constants.offerImages[index],
                     fit: BoxFit.fill,
                   );
                 },
                 autoplay: true,
-                itemCount: Constss.offerImages.length,
+                itemCount: Constants.offerImages.length,
                 pagination: const SwiperPagination(
                     alignment: Alignment.bottomCenter,
                     builder: DotSwiperPaginationBuilder(

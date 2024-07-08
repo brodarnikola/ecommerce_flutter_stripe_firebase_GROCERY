@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:grocery_app/consts/DIO_package/response.dart';
 import 'package:grocery_app/consts/firebase_consts.dart'; 
 import 'package:grocery_app/models/album_model.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
@@ -156,7 +157,8 @@ class _UserScreenState extends State<UserScreen> {
                   subtitle: address,
                   icon: IconlyLight.profile,
                   onPressed: () {
-                    fetchAlbum();
+                    fetchAlbum2();
+                    // fetchAlbum();
                     // await _showAddressDialog();
                   },
                   color: color,
@@ -269,6 +271,29 @@ class _UserScreenState extends State<UserScreen> {
         ),
       ),
     ));
+  }
+
+  Future<Album?> fetchAlbum2() async {
+
+     try {
+      var res = await UserNetworkService().getListOfUser2();
+      if ( res.success && res.data != null) {
+         print("data 22: ${res.data.toString()}");
+        //  var correctData = Album.fromJson(res.data as Map<String, dynamic>);
+        //  print("correctData 22: ${correctData}");
+        //  return correctData;
+        return res.data;
+      } else { 
+        GlobalMethods.errorDialog(subtitle: '${res.data}', context: context);
+         return null;
+      }
+    } on Exception catch (err) {
+      print("error 1: $err");
+      GlobalMethods.errorDialog(subtitle: 'err $err', context: context);
+       return null;
+    } 
+    return null;
+
   }
 
   Future<Album> fetchAlbum() async {

@@ -16,6 +16,6 @@ class Constants {
     'assets/images/landing/vergtablebg.jpg',
   ];
 
-  static const BASE_URL = 'https://rp.markoja.hr/api';
+  static const BASE_URL = 'https://jsonplaceholder.typicode.com'; // 'https://rp.markoja.hr/api';
 
 }

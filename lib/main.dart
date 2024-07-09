@@ -8,6 +8,7 @@ import 'package:grocery_app/providers/products_provider.dart';
 import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:grocery_app/providers/viewed_prod_provider.dart';
 import 'package:grocery_app/screens/auth/account_activation.dart';
+import 'package:grocery_app/screens/vehicles/vehicles_screen.dart';
 import 'package:grocery_app/screens/viewed_recently/viewed_recently.dart';
 import 'package:provider/provider.dart';
 
@@ -130,6 +131,8 @@ class _MyAppState extends State<MyApp> {
                         const ForgetPasswordScreen(), 
                     AccountActivationScreen.routeName: (ctx) =>
                         const AccountActivationScreen(),
+                    VehiclesScreen.routeName: (ctx) =>
+                        const VehiclesScreen(),
                     CategoryScreen.routeName: (ctx) => const CategoryScreen(),
                   });
             }),

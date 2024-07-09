@@ -12,6 +12,7 @@ import 'package:grocery_app/models/album_model.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 import 'package:grocery_app/screens/orders/orders_screen.dart';
+import 'package:grocery_app/screens/vehicles/vehicles_screen.dart';
 import 'package:grocery_app/screens/viewed_recently/viewed_recently.dart';
 import 'package:grocery_app/screens/wishlist/wishlist_screen.dart';
 import 'package:grocery_app/services/global_methods.dart';
@@ -208,9 +209,9 @@ class _UserScreenState extends State<UserScreen> {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const ForgetPasswordScreen(),
+                        builder: (context) => const VehiclesScreen(),
                       ),
-                    );
+                    ); 
                   },
                   color: color,
                 ),

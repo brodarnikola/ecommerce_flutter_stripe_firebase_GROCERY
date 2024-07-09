@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:grocery_app/screens/vehicles/vehicle_widget.dart';
 import 'package:grocery_app/widgets/back_widget.dart';
 import 'package:grocery_app/widgets/empty_screen.dart';
@@ -23,6 +24,9 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
   void initState() {
     final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
     ordersProvider.fetchOrders();
+
+    final vehiclesProvider = Provider.of<VehiclesProvider>(context, listen: false);
+    vehiclesProvider.fetchVehicles();
     super.initState();
   }
 
@@ -34,11 +38,16 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
     final ordersProvider = Provider.of<OrdersProvider>(context);
     final ordersList = ordersProvider.getOrders;
 
+
+
+    final vehiclesProvider = Provider.of<VehiclesProvider>(context);
+    final vehiclesList = vehiclesProvider.getVehicles;
+
     return ordersList.isEmpty
         ? const EmptyScreen(
-            title: 'You didnt place any order yet',
-            subtitle: 'order something and make me happy :)',
-            buttonText: 'Shop now',
+            title: 'You dont have any vehicles yet!',
+            subtitle: 'Insert some vehicles :)',
+            buttonText: 'Insert vehicle',
             imagePath: 'assets/images/cart.png',
           )
         : Scaffold(

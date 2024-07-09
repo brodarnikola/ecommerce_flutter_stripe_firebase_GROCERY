@@ -6,7 +6,7 @@ import 'package:grocery_app/models/album_model.dart';
 class UserNetworkService {
   Future<ApiResponse<List<Album>>> getListOfUsers() async {
     try {
-      var res = await Api().get("/dasds312albums",
+      var res = await Api().get("/albums",
           queryParameters: {}, options: null, addRequestInterceptor: false);
 
       var albumList = Album.fromJsonList(res?.data);

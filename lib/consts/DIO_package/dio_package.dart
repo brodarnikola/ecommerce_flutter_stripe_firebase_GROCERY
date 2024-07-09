@@ -21,7 +21,7 @@ class Api {
       //15 secs
       receiveTimeout: const Duration(milliseconds: 15000),
       //15 secs
-      sendTimeout: const Duration(milliseconds: 15000), 
+      sendTimeout: const Duration(milliseconds: 15000),
     ));
     dio.interceptors.addAll({ErrorInterceptor(dio)});
     return dio;
@@ -70,58 +70,7 @@ class Api {
           options: options,
           queryParameters: queryParameters);
     } on DioException catch (e) {
-
-      if (e.type == DioExceptionType.badResponse) {
-        if( e.response?.statusCode == 400) {
-          print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
-          throw BadRequestException(e.requestOptions);
-        } 
-        else if( e.response?.statusCode == 401) {
-          print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
-          throw UnauthorizedException(e.requestOptions);
-        } 
-        else if (e.response?.statusCode == 404) {
-          print("404 error: ${e.response?.data}");
-          throw NotFoundException(e.requestOptions);
-        } else if( e.response?.statusCode == 409) {
-          print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
-          throw ConflictException(e.requestOptions);
-        } else if( e.response?.statusCode == 500) {
-          print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
-          throw InternalServerErrorException(e.requestOptions);
-        } 
-        else {
-          print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
-          throw Exception(e.response?.data);
-        } 
-      }
-      else if (e.type == DioExceptionType.receiveTimeout) {
-        print("Receive timeout error");
-        throw ReceiveTimeOutException(e.requestOptions);
-      }
-      else if (e.type == DioExceptionType.connectionTimeout) {
-        print("Connection timeout error");
-        throw ConnectionTimeOutException(e.requestOptions);
-      }
-      else if (e.type == DioExceptionType.sendTimeout) {
-        print("Send timeout error");
-        throw SendTimeOutException(e.requestOptions);
-      }
-      else if (e.type == DioExceptionType.connectionError) {
-        if (e.error is SocketException) {
-          print("No internet connection");
-          throw NoInternetConnectionException(e.requestOptions);
-        } else {
-          print("Other error: ${e.message}");
-        }
-      } else {
-        print("Unexpected error: ${e.message}");
-      }
-      throw e;
-
-      // print("DioError in get request: ${dioError.message}");
-      // // Handle DioError here or rethrow
-      // throw dioError;
+      throw Exception(handleErrorException(e));
     } catch (err) {
       print("Error in get request: $err");
       // Handle other exceptions here or rethrow
@@ -140,20 +89,71 @@ class Api {
     void Function(int, int)? onReceiveProgress,
     bool addRequestInterceptor = true,
   }) async {
-    print("URL : ${this.dio.options.baseUrl + path}");
-    print("Request body : ${data}");
-    if (addRequestInterceptor) {
-      dio.interceptors
-          .add(RequestInterceptor(dio, apiKey: apiKey, token: token));
+    try {
+      print("URL : ${this.dio.options.baseUrl + path}");
+      print("Request body : ${data}");
+      if (addRequestInterceptor) {
+        dio.interceptors
+            .add(RequestInterceptor(dio, apiKey: apiKey, token: token));
+      }
+      return await dio.post(this.dio.options.baseUrl + path,
+          data: FormData.fromMap(data),
+          queryParameters: queryParameters,
+          options: options,
+          cancelToken: cancelToken,
+          onReceiveProgress: onReceiveProgress,
+          onSendProgress: onSendProgress);
+    } on DioException catch (e) {
+      throw Exception(handleErrorException(e));
+    } catch (err) {
+      print("Error in get request: $err");
+      // Handle other exceptions here or rethrow
+      throw err;
     }
-    return await dio.post(this.dio.options.baseUrl + path,
-        data: FormData.fromMap(data),
-        queryParameters: queryParameters,
-        options: options,
-        cancelToken: cancelToken,
-        onReceiveProgress: onReceiveProgress,
-        onSendProgress: onSendProgress);
   }
+}
+
+DioException handleErrorException(DioException e) {
+  if (e.type == DioExceptionType.badResponse) {
+    if (e.response?.statusCode == 400) {
+      print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
+      throw BadRequestException(e.requestOptions);
+    } else if (e.response?.statusCode == 401) {
+      print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
+      throw UnauthorizedException(e.requestOptions);
+    } else if (e.response?.statusCode == 404) {
+      print("404 error: ${e.response?.data}");
+      throw NotFoundException(e.requestOptions);
+    } else if (e.response?.statusCode == 409) {
+      print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
+      throw ConflictException(e.requestOptions);
+    } else if (e.response?.statusCode == 500) {
+      print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
+      throw InternalServerErrorException(e.requestOptions);
+    } else {
+      print("HTTP error: ${e.response?.statusCode}, ${e.response?.data}");
+      throw Exception(e.response?.data);
+    }
+  } else if (e.type == DioExceptionType.receiveTimeout) {
+    print("Receive timeout error");
+    throw ReceiveTimeOutException(e.requestOptions);
+  } else if (e.type == DioExceptionType.connectionTimeout) {
+    print("Connection timeout error");
+    throw ConnectionTimeOutException(e.requestOptions);
+  } else if (e.type == DioExceptionType.sendTimeout) {
+    print("Send timeout error");
+    throw SendTimeOutException(e.requestOptions);
+  } else if (e.type == DioExceptionType.connectionError) {
+    if (e.error is SocketException) {
+      print("No internet connection");
+      throw NoInternetConnectionException(e.requestOptions);
+    } else {
+      print("Other error: ${e.message}");
+    }
+  } else {
+    print("Unexpected error: ${e.message}");
+  }
+  throw e;
 }
 
 class ErrorInterceptor extends Interceptor {
@@ -167,18 +167,18 @@ class ErrorInterceptor extends Interceptor {
     super.onError(err, handler);
     switch (err.type) {
       case DioExceptionType.connectionTimeout:
-          print("DioExceptionType connection timeout exception");
-            break;  
-        // throw ConnectionTimeOutException(err.requestOptions);
+        print("DioExceptionType connection timeout exception");
+        break;
+      // throw ConnectionTimeOutException(err.requestOptions);
       case DioExceptionType.sendTimeout:
-          print("DioExceptionType send timeout exception");
-            break;  
-        // throw SendTimeOutException(err.requestOptions);
+        print("DioExceptionType send timeout exception");
+        break;
+      // throw SendTimeOutException(err.requestOptions);
       case DioExceptionType.receiveTimeout:
-          print("DioExceptionType received timeout exception");
-           break;  
-          // throw ReceiveTimeOutException(err.requestOptions);
-      case DioExceptionType.badCertificate: 
+        print("DioExceptionType received timeout exception");
+        break;
+      // throw ReceiveTimeOutException(err.requestOptions);
+      case DioExceptionType.badCertificate:
         print("DioExceptionType Bad certificate");
         break;
       case DioExceptionType.badResponse:
@@ -187,20 +187,20 @@ class ErrorInterceptor extends Interceptor {
         switch (err.response?.statusCode) {
           case 400:
             print("DioExceptionType 401 bad request");
-            break; 
-          case 401: 
+            break;
+          case 401:
             print("DioExceptionType 401 not authorized");
-            break; 
+            break;
           case 404:
             print("DioExceptionType 404 not found");
             break;
-            // throw NotFoundException(err.requestOptions).toString(); 
-          case 409: 
+          // throw NotFoundException(err.requestOptions).toString();
+          case 409:
             print("DioExceptionType 409 conflict exception");
-            break;  
+            break;
           case 500:
             print("DioExceptionType 500 server error exception");
-            break;  
+            break;
         }
         break;
 

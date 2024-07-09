@@ -1,6 +1,7 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/models/orders_model.dart';
+import 'package:grocery_app/models/vehicles_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/products_provider.dart';
@@ -19,22 +20,27 @@ class _VehicleWidgetState extends State<VehicleWidget> {
 
   @override
   void didChangeDependencies() {
-    final ordersModel = Provider.of<OrderModel>(context);
-    var orderDate = ordersModel.orderDate.toDate();
-    orderDateToShow = '${orderDate.day}/${orderDate.month}/${orderDate.year}';
+    // final ordersModel = Provider.of<OrderModel>(context);
+    // var orderDate = ordersModel.orderDate.toDate();
+    // orderDateToShow = '${orderDate.day}/${orderDate.month}/${orderDate.year}';
+
+  final vehicleModel = Provider.of<VehiclesModel>(context);
+    var orderDate = vehicleModel.DateTimeCreated; //.toDate();
+    orderDateToShow =  "Awesome date"; // '${orderDate.day}/${orderDate.month}/${orderDate.year}';
+
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    final ordersModel = Provider.of<OrderModel>(context);
+    final vehicleModel = Provider.of<VehiclesModel>(context);
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
-    final productProvider = Provider.of<ProductsProvider>(context);
-    final getCurrProduct = productProvider.findProdById(ordersModel.productId);
+    // final productProvider = Provider.of<ProductsProvider>(context);
+    // final getCurrProduct = productProvider.findProdById(ordersModel.productId);
     return ListTile(
       subtitle:
-          Text('Paid: \$${double.parse(ordersModel.price).toStringAsFixed(2)}'),
+          Text('Paid: \$${vehicleModel.Name}'), // .toStringAsFixed(2)}'),
       // onTap: () {
       //   GlobalMethods.navigateTo(
       //       ctx: context, routeName: ProductDetails.routeName);
@@ -45,7 +51,7 @@ class _VehicleWidgetState extends State<VehicleWidget> {
       //   boxFit: BoxFit.fill,
       // ),
       title: TextWidget(
-          text: '${getCurrProduct.title}  x${ordersModel.quantity}',
+          text: '${vehicleModel.Ticket}',
           color: color,
           textSize: 18),
       trailing: TextWidget(text: orderDateToShow, color: color, textSize: 18),

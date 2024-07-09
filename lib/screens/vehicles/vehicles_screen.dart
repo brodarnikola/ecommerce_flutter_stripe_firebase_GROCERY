@@ -38,12 +38,10 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
     final ordersProvider = Provider.of<OrdersProvider>(context);
     final ordersList = ordersProvider.getOrders;
 
-
-
     final vehiclesProvider = Provider.of<VehiclesProvider>(context);
     final vehiclesList = vehiclesProvider.getVehicles;
 
-    return ordersList.isEmpty
+    return vehiclesList.isEmpty
         ? const EmptyScreen(
             title: 'You dont have any vehicles yet!',
             subtitle: 'Insert some vehicles :)',
@@ -56,7 +54,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
               elevation: 0,
               centerTitle: false,
               title: TextWidget(
-                text: 'Your orders (${ordersList.length})',
+                text: 'Your vehicles (${vehiclesList.length})',
                 color: color,
                 textSize: 24.0,
                 isTitle: true,
@@ -65,13 +63,13 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                   Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
             ),
             body: ListView.separated(
-              itemCount: ordersList.length,
+              itemCount: vehiclesList.length,
               itemBuilder: (ctx, index) {
                 return Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
                   child: ChangeNotifierProvider.value(
-                    value: ordersList[index],
+                    value: vehiclesList[index],
                     child: const VehicleWidget(),
                   ),
                 );

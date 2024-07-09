@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocery_app/consts/DIO_package/response.dart';
+import 'package:grocery_app/providers/shared_pref_provider.dart';
 import 'package:grocery_app/screens/auth/login.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
+import 'package:provider/provider.dart';
 
 import '../../consts/constants.dart';
 import '../../consts/firebase_consts.dart';
@@ -82,6 +84,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           developer.log("Succefully register in  ${response}");
           developer.log("Succefully register in body ${response.data}");
 
+          saveData( _emailTextController.text.trim(), _fullNameController.text.trim(), _passTextController.text.trim());
+
           GlobalMethods.warningDialog(
               title: 'Confirm email',
               subtitle: 'An email has been send to your email address to confirm registration',
@@ -93,20 +97,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 );
               },
               context: context);
-
-          // Fluttertoast.showToast(
-          //   msg:
-          //       "An email has been sent to your email address, to confirm registration",
-          //   toastLength: Toast.LENGTH_LONG,
-          //   gravity: ToastGravity.CENTER,
-          //   timeInSecForIosWeb: 1,
-          //   backgroundColor: Colors.grey.shade600,
-          //   textColor: Colors.white,
-          //   fontSize: 16.0,
-          // );
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ));
         } else {
           // If the server did not return a 200 OK response,
           // then throw an exception.
@@ -129,6 +119,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
         });
       }
     }
+  }
+
+   // void saveData(String responseBody) async {
+  void saveData(String email, String fullName, String password) async {
+    final sharedPrefState =
+        Provider.of<SharedPrefsProvider>(context, listen: false); 
+
+    setState(() { 
+      sharedPrefState.setUsername = fullName;
+      sharedPrefState.setEmail = email;
+      sharedPrefState.setPassword = password;
+    }); 
   }
 
   Album parseAlbum(String responseBody) {

@@ -9,6 +9,35 @@ import 'package:grocery_app/models/login_registration_model.dart';
 
 class UserNetworkService {
 
+   Future<ApiResponse<Object>> accountConfirmation(String username, String confirmationCode) async {
+    try {
+      // Map data = {'Mail': username, 'MailMessage': "Password recovery token"};
+    
+      // String bodyData = json.encode(data);
+
+      developer.log("username is $username");
+      developer.log("confirmationCode is $confirmationCode");
+
+       var res = await Api().get("/activateaccount?Username=$username&ActivationCode=$confirmationCode", // + activationModel.Username + "&ActivationCode=" + activationModel.confirmationCode,, // Api().get("/UserResetPasswordRequest", 
+          queryParameters: {},
+          options: null,
+          addRequestInterceptor: false,
+          cancelToken: null,
+          onReceiveProgress: (p0, p1) => {});
+
+      var apiRes = ApiResponse<Object>(
+        success: true,
+        message: "Success",
+        data: Object(),
+      );
+
+      return apiRes;
+    } catch (err) {
+      print("Catched exception is $err");
+      throw Exception(err.toString());
+    }
+  }
+
    Future<ApiResponse<Object>> registerNewUser(String email, String password, String fullName, String address) async {
     try {
 

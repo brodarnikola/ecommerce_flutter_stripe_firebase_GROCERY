@@ -8,6 +8,8 @@ class SharedPrefs {
   static const String USERNAME_SP = "username";
   static const String EMAIL_SP = "email";
 
+  static const String PASSWORD = "password";
+
   setDarkTheme(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool(THEME_STATUS, value);
@@ -46,6 +48,16 @@ class SharedPrefs {
   Future<String> getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(EMAIL_SP) ?? "";
+  }
+
+  setPassword(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(PASSWORD, value);
+  }
+
+  Future<String> getPassword() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(PASSWORD) ?? "";
   }
 
 }

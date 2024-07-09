@@ -7,6 +7,7 @@ import 'package:grocery_app/consts/DIO_package/response.dart';
 import 'package:grocery_app/models/login_model.dart';
 import 'package:grocery_app/models/login_registration_model.dart';
 import 'package:grocery_app/providers/shared_pref_provider.dart';
+import 'package:grocery_app/screens/auth/account_activation.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
 import 'package:grocery_app/screens/auth/register.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
@@ -83,20 +84,10 @@ class _LoginScreenState extends State<LoginScreen> {
               subtitle: 'Wrong username or password', context: context);
           setState(() {
             _isLoading = false;
-          });
-          // If the server did not return a 200 OK response,
-          // then throw an exception.
-          // throw Exception('Failed to load album');
+          }); 
         }
         // loginUser();
-      }
-      // on FirebaseException catch (error) {
-      //   GlobalMethods.errorDialog(
-      //       subtitle: '${error.message}', context: context);
-      //   setState(() {
-      //     _isLoading = false;
-      //   });
-      // }
+      } 
       catch (error) {
         print('error in login 2 $error');
         GlobalMethods.errorDialog(subtitle: '$error', context: context);
@@ -338,6 +329,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: const Text(
                         'Forget password?',
+                        maxLines: 1,
+                        style: TextStyle(
+                            color: Colors.lightBlue,
+                            fontSize: 18,
+                            decoration: TextDecoration.underline,
+                            fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                  ), 
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: TextButton(
+                      onPressed: () {
+                        GlobalMethods.navigateTo(
+                            ctx: context,
+                            routeName: AccountActivationScreen.routeName);
+                      },
+                      child: const Text(
+                        'Account confirmation',
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.lightBlue,

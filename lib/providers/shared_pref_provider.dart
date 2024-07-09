@@ -3,13 +3,12 @@ import 'package:flutter/cupertino.dart';
 import '../services/shared_prefs.dart';
 
 class SharedPrefsProvider with ChangeNotifier {
-
   SharedPrefs darkThemePrefs = SharedPrefs();
 
   bool _darkTheme = false;
   bool get getDarkTheme => _darkTheme;
- 
-   bool _isLoggedIn = false;
+
+  bool _isLoggedIn = false;
   bool get getIsLoggedInValue => _isLoggedIn;
 
   String _usernameSp = "";
@@ -17,13 +16,15 @@ class SharedPrefsProvider with ChangeNotifier {
 
   String _emailSp = "";
   String get getEmail => _emailSp;
+ 
+  String _passwordSP = "";
+  String get getPassword => _passwordSP;
 
   set setDarkTheme(bool value) {
     _darkTheme = value;
     darkThemePrefs.setDarkTheme(value);
     notifyListeners();
   }
- 
 
   set setIsLoggedIn(bool value) {
     _isLoggedIn = value;
@@ -45,7 +46,7 @@ class SharedPrefsProvider with ChangeNotifier {
 
   void getUsernameValue() async {
     String usernameValue = await darkThemePrefs.getUsername();
-    _usernameSp = usernameValue; 
+    _usernameSp = usernameValue;
   }
 
   set setEmail(String value) {
@@ -56,7 +57,18 @@ class SharedPrefsProvider with ChangeNotifier {
 
   void getEmailValue() async {
     String emailValue = await darkThemePrefs.getEmail();
-    _emailSp = emailValue; 
+    _emailSp = emailValue;
+  }
+
+  set setPassword(String value) {
+    _passwordSP = value;
+    darkThemePrefs.setPassword(value);
+    notifyListeners();
+  }
+
+  void getPasswordValue() async {
+    String passwordValue = await darkThemePrefs.getPassword();
+    _passwordSP = passwordValue;
   }
 
 

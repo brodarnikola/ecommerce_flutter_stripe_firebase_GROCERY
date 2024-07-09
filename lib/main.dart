@@ -7,6 +7,7 @@ import 'package:grocery_app/providers/orders_provider.dart';
 import 'package:grocery_app/providers/products_provider.dart';
 import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:grocery_app/providers/viewed_prod_provider.dart';
+import 'package:grocery_app/screens/auth/account_activation.dart';
 import 'package:grocery_app/screens/viewed_recently/viewed_recently.dart';
 import 'package:provider/provider.dart';
 
@@ -51,6 +52,7 @@ class _MyAppState extends State<MyApp> {
        // call here only once when the app starts and setup usernmae and email
       sharedPrefProvider.getUsernameValue();
       sharedPrefProvider.getEmailValue();
+      sharedPrefProvider.getPasswordValue();
     }    
   }
 
@@ -125,7 +127,9 @@ class _MyAppState extends State<MyApp> {
                     RegisterScreen.routeName: (ctx) => const RegisterScreen(),
                     LoginScreen.routeName: (ctx) => const LoginScreen(),
                     ForgetPasswordScreen.routeName: (ctx) =>
-                        const ForgetPasswordScreen(),
+                        const ForgetPasswordScreen(), 
+                    AccountActivationScreen.routeName: (ctx) =>
+                        const AccountActivationScreen(),
                     CategoryScreen.routeName: (ctx) => const CategoryScreen(),
                   });
             }),

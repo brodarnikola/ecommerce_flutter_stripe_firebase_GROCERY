@@ -17,7 +17,22 @@ class Login {
         'firstName': firstName,
         'lastName': lastName,
         'title': email,
-      };
+      };   
+} 
 
-   
+class AccountConfirmation { 
+
+  final String Username;
+  final String Password; 
+
+  AccountConfirmation(this.Username, this.Password);
+
+  AccountConfirmation.fromJson(Map<String, dynamic> json)
+      : Username = json['Username'] as String,
+        Password = json['Password'] as String;
+
+  Map<String, dynamic> toJson() => {
+        'Username': Username,
+        'Password': Password, 
+      };   
 } 

@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:grocery_app/consts/DIO_package/response.dart';
 import 'package:grocery_app/models/login_model.dart';
+import 'package:grocery_app/models/login_registration_model.dart';
 import 'package:grocery_app/providers/shared_pref_provider.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
 import 'package:grocery_app/screens/auth/register.dart';
@@ -58,7 +60,35 @@ class _LoginScreenState extends State<LoginScreen> {
         _isLoading = true;
       });
       try {
-        loginUser();
+        var response = await UserNetworkService().loginUser(
+            _emailTextController.text.toLowerCase().trim(),
+            _passTextController.text); 
+
+        if (response.success && response.data != null) {
+          print('Succefully logged in');
+          developer.log("logged in  ${response}");
+          developer.log("logged in body ${response.data}");
+
+          // compute(parseLogin, response.body);
+
+          saveData(response.data);
+
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) => const FetchScreen(),
+          ));
+        }
+        else {
+          print('error in login 1');
+          GlobalMethods.errorDialog(
+              subtitle: 'Wrong username or password', context: context);
+          setState(() {
+            _isLoading = false;
+          });
+          // If the server did not return a 200 OK response,
+          // then throw an exception.
+          // throw Exception('Failed to load album');
+        }
+        // loginUser();
       }
       // on FirebaseException catch (error) {
       //   GlobalMethods.errorDialog(
@@ -103,15 +133,14 @@ class _LoginScreenState extends State<LoginScreen> {
     developer.log(loginRequestText);
 
     // String bodyData = json.encode(data);
-    final response =
-        await http.post(Uri.parse('${Constants.BASE_URL}/token'),
-            headers: {
-              "Content-Type": "application/json",
-              "Accept": "application/json",
-              "Access-Control-Allow-Origin": "*"
-            },
-            body: loginRequestText // bodyData,
-            );
+    final response = await http.post(Uri.parse('${Constants.BASE_URL}/token'),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
+        body: loginRequestText // bodyData,
+        );
 
     if (response.statusCode == 200) {
       // If the server did return a 200 OK response,
@@ -123,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // compute(parseLogin, response.body);
 
-      saveData(response.body);
+      // saveData(response.body);
 
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const FetchScreen(),
@@ -148,21 +177,22 @@ class _LoginScreenState extends State<LoginScreen> {
     return parsed.map<User>((json) => User.fromJson(json)).toList();
   }
 
-  void saveData(String responseBody) async {
-    
+  // void saveData(String responseBody) async {
+  void saveData(Login responseBody) async {
     final sharedPrefState =
         Provider.of<SharedPrefsProvider>(context, listen: false);
-    
-    final Map<String, dynamic> parsed = jsonDecode(responseBody);
-    final String firstName = parsed['firstName'];
-    final String lastName = parsed['lastName'];
-    final String email = parsed['email'];
+
+    // final Map<String, dynamic> parsed = jsonDecode(responseBody);
+    final String firstName = responseBody.firstName; // parsed['firstName'];
+    final String lastName = responseBody.lastName; // parsed['lastName'];
+    final String email = responseBody.email; // parsed['email'];
 
     setState(() {
       sharedPrefState.setIsLoggedIn = true;
       sharedPrefState.setUsername = "$firstName $lastName";
       sharedPrefState.setEmail = email;
     });
+
     // SharedPreferences prefs = await SharedPreferences.getInstance();
     // await prefs.setBool(isLoggedIn, true);
     // await prefs.setString(usernameSP, username);

@@ -2,6 +2,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:grocery_app/consts/DIO_package/response.dart';
 import 'package:grocery_app/consts/firebase_consts.dart';
 import 'package:grocery_app/screens/auth/login.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
@@ -50,33 +51,13 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         _isLoading = true;
       });
       try {
-        Map data = {
-          'Mail': _emailTextController.text.toLowerCase().trim(),
-          'MailMessage': "Password recovery token"
-        };
-        // developer.log(data as String);
+        var response = await UserNetworkService()
+            .forgotPassword(_emailTextController.text.toLowerCase().trim());
 
-        String bodyData = json.encode(data);
-        final response = await http.post(
-          Uri.parse('${Constants.BASE_URL}/UserResetPasswordRequest'),
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Access-Control-Allow-Origin": "*"
-          },
-          body: bodyData,
-        );
-
-        if (response.statusCode == 200) {
-          // If the server did return a 200 OK response,
-          // then parse the JSON.
-
-          developer.log("forgot password  ${response}");
-          developer.log("forgot password body ${response.body}");
-
-          // compute(parseForgotPassword, response.body);
-
-          print('Succefully forgot password');
+        if (response.success && response.data != null) {
+          print('Succefully forgot password in');
+          developer.log("forgot password in  ${response}");
+          developer.log("forgot password in body ${response.data}");
 
           Fluttertoast.showToast(
             msg: "An email has been sent to your email address",
@@ -98,6 +79,55 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             _isLoading = false;
           });
         }
+
+        // Map data = {
+        //   'Mail': _emailTextController.text.toLowerCase().trim(),
+        //   'MailMessage': "Password recovery token"
+        // };
+        // // developer.log(data as String);
+
+        // String bodyData = json.encode(data);
+        // final response = await http.post(
+        //   Uri.parse('${Constants.BASE_URL}/<UserResetPasswordRequest>'),
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     "Accept": "application/json",
+        //     "Access-Control-Allow-Origin": "*"
+        //   },
+        //   body: bodyData,
+        // );
+
+        // if (response.statusCode == 200) {
+        //   // If the server did return a 200 OK response,
+        //   // then parse the JSON.
+
+        //   developer.log("forgot password  ${response}");
+        //   developer.log("forgot password body ${response.body}");
+
+        //   // compute(parseForgotPassword, response.body);
+
+        //   print('Succefully forgot password');
+
+        //   Fluttertoast.showToast(
+        //     msg: "An email has been sent to your email address",
+        //     toastLength: Toast.LENGTH_LONG,
+        //     gravity: ToastGravity.CENTER,
+        //     timeInSecForIosWeb: 1,
+        //     backgroundColor: Colors.grey.shade600,
+        //     textColor: Colors.white,
+        //     fontSize: 16.0,
+        //   );
+        //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+        //     builder: (context) => const LoginScreen(),
+        //   ));
+        // } else {
+        //   // If the server did not return a 200 OK response,
+        //   // then throw an exception.
+        //   GlobalMethods.errorDialog(subtitle: 'Wrong email', context: context);
+        //   setState(() {
+        //     _isLoading = false;
+        //   });
+        // }
         // authInstance.sendPasswordResetEmail(
         //   email: _emailTextController.text.toLowerCase());
       }

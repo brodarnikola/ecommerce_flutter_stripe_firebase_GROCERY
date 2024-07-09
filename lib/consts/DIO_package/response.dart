@@ -1,9 +1,87 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:grocery_app/consts/DIO_package/dio_package.dart';
 import 'package:grocery_app/models/album_model.dart';
+import 'dart:developer' as developer;
+
+import 'package:grocery_app/models/login_registration_model.dart';
 
 class UserNetworkService {
+  Future<ApiResponse<Object>> forgotPassword(String username) async {
+    try {
+      Map data = {'Mail': username, 'MailMessage': "Password recovery token"};
+    
+      String bodyData = json.encode(data);
+
+      developer.log(bodyData);
+
+       var res = await Api().post("/UserResetPasswordRequest",
+          data: bodyData,
+          isLoginRequest: true,
+          queryParameters: {},
+          options: null,
+          addRequestInterceptor: false,
+          cancelToken: null,
+          onReceiveProgress: (p0, p1) => {});
+
+      var apiRes = ApiResponse<Object>(
+        success: true,
+        message: "Success",
+        data: Object(),
+      );
+
+      return apiRes;
+    } catch (err) {
+      print("Catched exception is $err");
+      throw Exception(err.toString());
+    }
+  }
+
+  Future<ApiResponse<Login>> loginUser(String username, String password) async {
+    try {
+      Map<String, String> loginData = {
+        "grant_type": "password",
+        "source": "mobileapp",
+        'username': username,
+        'password': password,
+        'uuid':
+            username, // "87f05e5908172913", // "e751f0284458d01d", // database.get("DeviceUUID"), // --> e751f0284458d01d  za account ipavelic1@gmail.com
+        "deviceOS": "android",
+        "notificationRegID":
+            "eyJt_vSrRu2sxIQkTK_GSn%3AAPA91bGcxo7a2MvikhTta22e63R7696Z0hxv7hLbVHULjLmaSwN_OovuBRYWuBmXNtXcFHU4rm",
+        "languageID": "1"
+      };
+
+      String loginRequestText =
+          loginData.entries.map((e) => '${e.key}=${e.value}').join('&');
+
+      developer.log(loginRequestText);
+
+      var res = await Api().post("/token",
+          data: loginRequestText,
+          isLoginRequest: true,
+          queryParameters: {},
+          options: null,
+          addRequestInterceptor: false,
+          cancelToken: null,
+          onReceiveProgress: (p0, p1) => {});
+
+      var correctData = Login.fromJson(res.data);
+
+      var apiRes = ApiResponse<Login>(
+        success: true,
+        message: "Success",
+        data: correctData,
+      );
+
+      return apiRes;
+    } catch (err) {
+      print("Catched exception is $err");
+      throw Exception(err.toString());
+    }
+  }
+
   Future<ApiResponse<List<Album>>> getListOfUsers() async {
     try {
       var res = await Api().get("/albums",
@@ -11,8 +89,6 @@ class UserNetworkService {
 
       var albumList = Album.fromJsonList(res?.data);
 
-      // print("album body 00");
-      // var albumList = Album.fromJsonList([res.data]);
       albumList.forEach((album) {
         print(
             'userId: ${album.userId}, id: ${album.id}, title: ${album.title}');
@@ -29,14 +105,6 @@ class UserNetworkService {
       return apiRes;
     } catch (err) {
       print("22 Catched exception is $err");
-      // if (err is NotFoundException) {
-      //   print("DioError: ${err.message}");
-      //   print("DioError response data: ${err.response?.data}");
-      //   print("DioError response status code: ${err.response?.statusCode}");
-      // } else {
-      //   print("Catched exception is $err");
-      // }
-      // print(err);
       throw Exception(err.toString());
     }
   }

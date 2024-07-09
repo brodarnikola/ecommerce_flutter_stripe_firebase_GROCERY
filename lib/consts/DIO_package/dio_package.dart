@@ -22,6 +22,11 @@ class Api {
       receiveTimeout: const Duration(milliseconds: 15000),
       //15 secs
       sendTimeout: const Duration(milliseconds: 15000),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
     ));
     dio.interceptors.addAll({ErrorInterceptor(dio)});
     return dio;
@@ -88,6 +93,7 @@ class Api {
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
     bool addRequestInterceptor = true,
+    bool isLoginRequest = false
   }) async {
     try {
       print("URL : ${this.dio.options.baseUrl + path}");
@@ -96,8 +102,16 @@ class Api {
         dio.interceptors
             .add(RequestInterceptor(dio, apiKey: apiKey, token: token));
       }
+      
+      Object finalData = Object();
+      if(isLoginRequest) {
+        finalData = data;
+      } else {
+        finalData = FormData.fromMap(data);
+      };
+
       return await dio.post(this.dio.options.baseUrl + path,
-          data: FormData.fromMap(data),
+          data: finalData, // FormData.fromMap(data),
           queryParameters: queryParameters,
           options: options,
           cancelToken: cancelToken,
@@ -110,6 +124,53 @@ class Api {
       // Handle other exceptions here or rethrow
       throw err;
     }
+  }
+
+  //  Future<Response> postLogin(
+  //   String path, {
+  //   dynamic data,
+  //   Map<String, dynamic>? queryParameters,
+  //   Options? options,
+  //   CancelToken? cancelToken,
+  //   void Function(int, int)? onSendProgress,
+  //   void Function(int, int)? onReceiveProgress,
+  //   bool addRequestInterceptor = true,
+  // }) async {
+  //   try {
+  //     print("URL : ${this.dio.options.baseUrl + path}");
+  //     print("Request body : ${data}");
+  //     if (addRequestInterceptor) {
+  //       dio.interceptors
+  //           .add(RequestInterceptor(dio, apiKey: apiKey, token: token));
+  //     }
+  //     return await dio.post(this.dio.options.baseUrl + path,
+  //         data: data,
+  //         queryParameters: queryParameters,
+  //         options: options,
+  //         cancelToken: cancelToken,
+  //         onReceiveProgress: onReceiveProgress,
+  //         onSendProgress: onSendProgress);
+  //   } on DioException catch (e) {
+  //     throw Exception(handleErrorException(e));
+  //   } catch (err) {
+  //     print("Error in get request: $err");
+  //     // Handle other exceptions here or rethrow
+  //     throw err;
+  //   }
+  // }
+}
+
+class RequestInterceptor extends Interceptor {
+  final Dio dio;
+  final String apiKey;
+  final String token;
+
+  RequestInterceptor(this.dio, {required this.token, required this.apiKey});
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    options.headers = {'apiKey': apiKey, 'token': token};
+    return handler.next(options);
   }
 }
 
@@ -214,20 +275,6 @@ class ErrorInterceptor extends Interceptor {
         print("DioExceptionType unknown");
         break;
     }
-  }
-}
-
-class RequestInterceptor extends Interceptor {
-  final Dio dio;
-  final String apiKey;
-  final String token;
-
-  RequestInterceptor(this.dio, {required this.token, required this.apiKey});
-
-  @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    options.headers = {'apiKey': apiKey, 'token': token};
-    return handler.next(options);
   }
 }
 

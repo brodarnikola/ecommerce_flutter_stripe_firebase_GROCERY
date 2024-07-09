@@ -8,6 +8,54 @@ import 'dart:developer' as developer;
 import 'package:grocery_app/models/login_registration_model.dart';
 
 class UserNetworkService {
+
+   Future<ApiResponse<Object>> registerNewUser(String email, String password, String fullName, String address) async {
+    try {
+
+        Map data = {
+          'Username': email,
+          'Email': email,
+          'Password': password,
+          'Name': fullName,
+          'Surname': " Awesome",
+          'Address': address,
+          'City': address,
+          'Zip': address,
+          'State': address,
+          'Phone': address, 
+          'OIB': "",
+          'EmailNotificationTypeID': 1,
+          'LanguageID': 1,
+          'DeviceOS': "android",
+        };
+
+      // Map data = {'Mail': username, 'MailMessage': "Password recovery token"};
+    
+      String bodyData = json.encode(data);
+
+      developer.log(bodyData);
+
+       var res = await Api().post("/registeruser",
+          data: bodyData, 
+          queryParameters: {},
+          options: null,
+          addRequestInterceptor: false,
+          cancelToken: null,
+          onReceiveProgress: (p0, p1) => {});
+
+      var apiRes = ApiResponse<Object>(
+        success: true,
+        message: "Success",
+        data: Object(),
+      );
+
+      return apiRes;
+    } catch (err) {
+      print("Catched registration exception is $err");
+      throw Exception(err.toString());
+    }
+  }
+
   Future<ApiResponse<Object>> forgotPassword(String username) async {
     try {
       Map data = {'Mail': username, 'MailMessage': "Password recovery token"};
@@ -17,8 +65,7 @@ class UserNetworkService {
       developer.log(bodyData);
 
        var res = await Api().post("/UserResetPasswordRequest",
-          data: bodyData,
-          isLoginRequest: true,
+          data: bodyData, 
           queryParameters: {},
           options: null,
           addRequestInterceptor: false,
@@ -59,8 +106,7 @@ class UserNetworkService {
       developer.log(loginRequestText);
 
       var res = await Api().post("/token",
-          data: loginRequestText,
-          isLoginRequest: true,
+          data: loginRequestText, 
           queryParameters: {},
           options: null,
           addRequestInterceptor: false,

@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:grocery_app/consts/DIO_package/response.dart';
 import 'package:grocery_app/screens/auth/login.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 
@@ -68,52 +70,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = true;
       });
       try {
-        Map data = {
-          'Username': _emailTextController.text.toLowerCase().trim(),
-          'Password': _passTextController.text.trim(),
-          'Name': _fullNameController.text.trim(),
-          'Surname': " Awesome",
-          'Address': _addressTextController.text.trim(),
-          'City': _addressTextController.text.trim(),
-          'Zip': _addressTextController.text.trim(),
-          'State': _addressTextController.text.trim(),
-          'Phone': _addressTextController.text.trim(),
-          'Email': _emailTextController.text.toLowerCase().trim(),
-          'OIB': "",
-          'EmailNotificationTypeID': 1,
-          'LanguageID': 1,
-          'DeviceOS': "android",
-        };
-        // developer.log(data as String);
-
-        String bodyData = json.encode(data);
-        final response = await http.post(
-          Uri.parse('${Constants.BASE_URL}/registeruser'),
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Access-Control-Allow-Origin": "*"
-          },
-          body: bodyData,
+        var response = await UserNetworkService().registerNewUser(
+          _emailTextController.text.toLowerCase().trim(),
+          _passTextController.text.trim(),
+          _fullNameController.text.trim(),
+          _addressTextController.text.trim(),
         );
 
-        if (response.statusCode == 200) {
-          // If the server did return a 200 OK response,
-          // then parse the JSON.
+        if (response.success && response.data != null) {
+          print('Succefully register');
+          developer.log("Succefully register in  ${response}");
+          developer.log("Succefully register in body ${response.data}");
 
-          developer.log("album  ${response}");
-          developer.log("album body ${response.body}");
+          GlobalMethods.warningDialog(
+              title: 'Confirm email',
+              subtitle: 'An email has been send to your email address to confirm registration',
+              fct: () async { 
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                );
+              },
+              context: context);
 
-          compute(parseAlbum, response.body);
-
-          print('Succefully registered');
+          // Fluttertoast.showToast(
+          //   msg:
+          //       "An email has been sent to your email address, to confirm registration",
+          //   toastLength: Toast.LENGTH_LONG,
+          //   gravity: ToastGravity.CENTER,
+          //   timeInSecForIosWeb: 1,
+          //   backgroundColor: Colors.grey.shade600,
+          //   textColor: Colors.white,
+          //   fontSize: 16.0,
+          // );
           Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => const FetchScreen(),
+            builder: (context) => const LoginScreen(),
           ));
         } else {
           // If the server did not return a 200 OK response,
           // then throw an exception.
-          throw Exception('Failed to load album');
+          GlobalMethods.errorDialog(
+              subtitle: 'Something is wrong. ${response.message}',
+              context: context);
+          setState(() {
+            _isLoading = false;
+          });
         }
       } catch (error) {
         developer.log("error  ${error}");
@@ -151,23 +153,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 // Surname: "Brodar"
 // Username: "test1@gmail.com"
 // Zip: "40311"
-
-// let registerModel = {
-//                 Username: uname,
-//                 Password: pwd1,
-//                 Name: namet,
-//                 Surname: surnamet,
-//                 Address: addresst,
-//                 City: cityt,
-//                 Zip: zipt,
-//                 State: countryt,
-//                 Phone: phonet,
-//                 Email: emailForSave,
-//                 OIB: oibt,
-//                 EmailNotificationTypeID: emailNotifTypeID,
-//                 LanguageID: langID,
-//                 DeviceOS: deviceOS,
-//             };
 
   void _submitFormOnRegister() async {
     final isValid = _formKey.currentState!.validate();

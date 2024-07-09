@@ -93,7 +93,7 @@ class Api {
     void Function(int, int)? onSendProgress,
     void Function(int, int)? onReceiveProgress,
     bool addRequestInterceptor = true,
-    bool isLoginRequest = false
+    // bool isLoginRequest = false
   }) async {
     try {
       print("URL : ${this.dio.options.baseUrl + path}");
@@ -102,16 +102,16 @@ class Api {
         dio.interceptors
             .add(RequestInterceptor(dio, apiKey: apiKey, token: token));
       }
-      
-      Object finalData = Object();
-      if(isLoginRequest) {
-        finalData = data;
-      } else {
-        finalData = FormData.fromMap(data);
-      };
+
+      // Object finalData = Object();
+      // if(isLoginRequest) {
+      //   finalData = data;
+      // } else {
+      //   finalData = FormData.fromMap(data);
+      // };
 
       return await dio.post(this.dio.options.baseUrl + path,
-          data: finalData, // FormData.fromMap(data),
+          data: data, // finalData, // FormData.fromMap(data),
           queryParameters: queryParameters,
           options: options,
           cancelToken: cancelToken,
@@ -124,40 +124,7 @@ class Api {
       // Handle other exceptions here or rethrow
       throw err;
     }
-  }
-
-  //  Future<Response> postLogin(
-  //   String path, {
-  //   dynamic data,
-  //   Map<String, dynamic>? queryParameters,
-  //   Options? options,
-  //   CancelToken? cancelToken,
-  //   void Function(int, int)? onSendProgress,
-  //   void Function(int, int)? onReceiveProgress,
-  //   bool addRequestInterceptor = true,
-  // }) async {
-  //   try {
-  //     print("URL : ${this.dio.options.baseUrl + path}");
-  //     print("Request body : ${data}");
-  //     if (addRequestInterceptor) {
-  //       dio.interceptors
-  //           .add(RequestInterceptor(dio, apiKey: apiKey, token: token));
-  //     }
-  //     return await dio.post(this.dio.options.baseUrl + path,
-  //         data: data,
-  //         queryParameters: queryParameters,
-  //         options: options,
-  //         cancelToken: cancelToken,
-  //         onReceiveProgress: onReceiveProgress,
-  //         onSendProgress: onSendProgress);
-  //   } on DioException catch (e) {
-  //     throw Exception(handleErrorException(e));
-  //   } catch (err) {
-  //     print("Error in get request: $err");
-  //     // Handle other exceptions here or rethrow
-  //     throw err;
-  //   }
-  // }
+  } 
 }
 
 class RequestInterceptor extends Interceptor {

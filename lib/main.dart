@@ -55,6 +55,7 @@ class _MyAppState extends State<MyApp> {
       sharedPrefProvider.getUsernameValue();
       sharedPrefProvider.getEmailValue();
       sharedPrefProvider.getPasswordValue();
+      sharedPrefProvider.getGUIDValue();
     }    
   }
 

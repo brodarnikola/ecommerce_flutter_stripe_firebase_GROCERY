@@ -23,6 +23,18 @@ class VehiclesProvider with ChangeNotifier {
     _vehicles.removeAt(index);
     notifyListeners();  
   }
+ 
+  void addVehicle(VehiclesModel data) {
+    _vehicles.add(data);
+    notifyListeners();  
+  }
+
+
+  void updateVehicle(VehiclesModel data) {
+    int index = _vehicles.indexWhere((element) => element.UserDeviceVehicleID == data.UserDeviceVehicleID && element.UserDeviceID == data.UserDeviceID);
+    _vehicles[index] = data;
+    notifyListeners();
+  }
 
   // Future<Album> fetchAlbum() async {
   //   final response = await http

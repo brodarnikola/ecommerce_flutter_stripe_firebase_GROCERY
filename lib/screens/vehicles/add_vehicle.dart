@@ -1,7 +1,7 @@
-import 'package:card_swiper/card_swiper.dart'; 
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart'; 
-import 'package:grocery_app/providers/vehicles_provider.dart';  
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 import 'package:grocery_app/screens/vehicles/vehicles_screen.dart';
 import 'package:grocery_app/services/authentication_services.dart';
@@ -15,19 +15,23 @@ import '../../widgets/auth_button.dart';
 import '../../widgets/text_widget.dart';
 
 import 'dart:convert';
-import 'dart:developer' as developer; 
+import 'dart:developer' as developer;
 
 import 'package:grocery_app/models/album_model.dart';
 import 'package:flutter/foundation.dart';
 
-class AddVehicleScreen extends StatefulWidget { 
-
+class AddVehicleScreen extends StatefulWidget {
   static const routeName = '/AddVehicleScreen';
-  final String vehicleNameParam;  
-  final String vehiclePlateNumberParam;  
-  final int userDeviceVehicleIDParam;  
+  final String vehicleNameParam;
+  final String vehiclePlateNumberParam;
+  final int userDeviceVehicleIDParam;
 
-  const AddVehicleScreen({Key? key, this.vehicleNameParam = "", this.vehiclePlateNumberParam = "", this.userDeviceVehicleIDParam = 0}) : super(key: key);
+  const AddVehicleScreen(
+      {Key? key,
+      this.vehicleNameParam = "",
+      this.vehiclePlateNumberParam = "",
+      this.userDeviceVehicleIDParam = 0})
+      : super(key: key);
 
   @override
   State<AddVehicleScreen> createState() => _AddVehicleScreenState();
@@ -35,13 +39,15 @@ class AddVehicleScreen extends StatefulWidget {
 
 class _AddVehicleScreenState extends State<AddVehicleScreen> {
   final _nameTextController = TextEditingController();
-  final _plateNumberTextController = TextEditingController(); 
+  final _plateNumberTextController = TextEditingController();
 
   late String vehicleName;
   late String vechiclePlateNumber;
 
   late int userDeviceVehicleID;
   late bool isNewVehicle = true;
+
+  late VehiclesProvider vehiclesProvider;
 
   @override
   void initState() {
@@ -51,29 +57,30 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     vechiclePlateNumber = widget.vehiclePlateNumberParam;
     userDeviceVehicleID = widget.userDeviceVehicleIDParam;
 
-    if( vehicleName.isNotEmpty && vechiclePlateNumber.isNotEmpty && userDeviceVehicleID != null )
-    { 
+    if (vehicleName.isNotEmpty &&
+        vechiclePlateNumber.isNotEmpty &&
+        userDeviceVehicleID != null) {
       _nameTextController.text = vehicleName;
       _plateNumberTextController.text = vechiclePlateNumber;
 
       isNewVehicle = false;
-    } 
+    }
   }
 
   @override
   void didChangeDependencies() {
     // TODO: implement didChangeDependencies
     super.didChangeDependencies();
- 
-    final vehiclesProvider = Provider.of<VehiclesProvider>(context);
+
+    vehiclesProvider = Provider.of<VehiclesProvider>(context);
     final vehiclesList = vehiclesProvider.getVehicles;
   }
 
 //   Exception has occurred.
 // FlutterError (dependOnInheritedWidgetOfExactType<_InheritedProviderScope<VehiclesProvider?>>() or dependOnInheritedElement() was called before _AddVehicleScreenState.initState() completed.
-// When an inherited widget changes, for example if the value of Theme.of() changes, its dependent widgets are rebuilt. 
+// When an inherited widget changes, for example if the value of Theme.of() changes, its dependent widgets are rebuilt.
 // If the dependent widget's reference to the inherited widget is in a constructor or an initState() method, then the rebuilt dependent widget will not reflect the changes in the inherited widget.
-// Typically references to inherited widgets should occur in widget build() methods. Alternatively, initialization based on inherited widgets can be placed in the didChangeDependencies method, 
+// Typically references to inherited widgets should occur in widget build() methods. Alternatively, initialization based on inherited widgets can be placed in the didChangeDependencies method,
 // which is called after initState and whenever the dependencies change thereafter.)
 
   @override
@@ -87,29 +94,46 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   bool _isLoading = false;
 
   void addOrUpdateVehicle() async {
-    if (_nameTextController.text.isEmpty ) {
+    if (_nameTextController.text.isEmpty) {
       GlobalMethods.errorDialog(
           subtitle: 'Please enter a vehicle name', context: context);
-    }
-    else if (_nameTextController.text.isEmpty ) {
+    } else if (_nameTextController.text.isEmpty) {
       GlobalMethods.errorDialog(
           subtitle: 'Please enter a vehicle plate number', context: context);
-    } 
-    else {
+    } else {
       setState(() {
         _isLoading = true;
       });
       try {
-        var response = await AuthenticationServices()
-            .addOrUpdateVehicle(_nameTextController.text.toLowerCase().trim(), _plateNumberTextController.text.toLowerCase().trim(), userDeviceVehicleID, isNewVehicle, context);
+        var response = await AuthenticationServices().addOrUpdateVehicle(
+            _nameTextController.text.toUpperCase().trim(),
+            _plateNumberTextController.text.toUpperCase().trim(),
+            userDeviceVehicleID,
+            isNewVehicle,
+            context);
 
         if (response.success && response.data != null) {
           print('Succefully add or update vehicle in');
           developer.log("Succefully add or update vehicle in  ${response}");
-          developer.log("Succefully add or update vehicle in body ${response.data}");
+          developer
+              .log("Succefully add or update vehicle in body ${response.data}");
+
+          if( isNewVehicle ) { 
+            vehiclesProvider.addVehicle(response.data);
+          }    
+          else { 
+            vehiclesProvider.updateVehicle(response.data);  
+          }
+
+          late String toastMessage;
+          if (isNewVehicle) {
+            toastMessage = "Vehicle added successfully";
+          } else {
+            toastMessage = "Vehicle updated successfully";
+          }
 
           Fluttertoast.showToast(
-            msg: "An email has been sent to your email address",
+            msg: toastMessage,
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -123,13 +147,14 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         } else {
           // If the server did not return a 200 OK response,
           // then throw an exception.
-          GlobalMethods.errorDialog(subtitle: 'Something is wrong. ${response.message}', context: context);
+          GlobalMethods.errorDialog(
+              subtitle: 'Something is wrong. ${response.message}',
+              context: context);
           setState(() {
             _isLoading = false;
           });
-        } 
-      }
-      catch (error) {
+        }
+      } catch (error) {
         GlobalMethods.errorDialog(subtitle: '$error', context: context);
         setState(() {
           _isLoading = false;
@@ -210,7 +235,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       ),
                     ),
                   ),
-                   TextField(
+                  TextField(
                     controller: _plateNumberTextController,
                     style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(

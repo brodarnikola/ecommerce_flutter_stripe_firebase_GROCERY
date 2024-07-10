@@ -52,7 +52,7 @@ class _VehicleWidgetState extends State<VehicleWidget> {
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
     return ListTile(
-      subtitle: Text(vehicleModel.Name),
+      subtitle: Text(vehicleModel.Ticket),
 
       trailing: IconButton(
         onPressed: () {
@@ -76,7 +76,7 @@ class _VehicleWidgetState extends State<VehicleWidget> {
         ),
       ),
       title: TextWidget(
-          text: '${vehicleModel.Ticket}', color: color, textSize: 18),
+          text: '${vehicleModel.Name}', color: color, textSize: 18),
       // trailing: TextWidget(text: orderDateToShow, color: color, textSize: 18),
     );
   }

@@ -75,7 +75,7 @@ class AuthenticationServices {
     }
   }
 
-  Future<ApiResponse<Object>> addOrUpdateVehicle(String name, String plateNumber, int userDeviceVehicleID, bool isNewVehicle, BuildContext context) async {
+  Future<ApiResponse<VehiclesModel>> addOrUpdateVehicle(String name, String plateNumber, int userDeviceVehicleID, bool isNewVehicle, BuildContext context) async {
     try {
 
       final sharedPrefState =
@@ -87,11 +87,6 @@ class AuthenticationServices {
         'UserDeviceVehicleID': userDeviceVehicleID,
         'Name': name,
       };
-
-      // UserDeviceGUID: guid,
-      //       Name: namet,
-      //       Ticket: registrationt,
-      //       UserDeviceVehicleID: selectedVehicle ? selectedVehicle.UserDeviceVehicleID : 0,
 
       late String url;
       if(isNewVehicle) {
@@ -117,12 +112,14 @@ class AuthenticationServices {
           cancelToken: null,
           onReceiveProgress: (p0, p1) => {});
 
-      print("11 vehicles response body is 11  ${res?.data}"); 
+      print("11 vehicles add or update response body is 11  ${res.data}"); 
 
-      var apiRes = ApiResponse<Object>(
+       var correctData = VehiclesModel.fromJson(res.data);
+
+      var apiRes = ApiResponse<VehiclesModel>(
         success: true,
         message: "Success",
-        data:Object(), 
+        data: correctData
       ); 
 
       return apiRes;
@@ -167,7 +164,7 @@ class AuthenticationServices {
       var apiRes = ApiResponse<Object>(
         success: true,
         message: "Success",
-        data:Object(), 
+        data: Object(), 
       ); 
 
       return apiRes;

@@ -92,10 +92,9 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 20),
                   ),
-                  onPressed: () {
-                    const AddVehicleScreen();
-                    // GlobalMethods.navigateTo(
-                    //     ctx: context, routeName: AddVehicleScreen.routeName);
+                  onPressed: () { 
+                    GlobalMethods.navigateTo(
+                        ctx: context, routeName: AddVehicleScreen.routeName);
                   },
                   child: TextWidget(
                     text: "Add vehicle",

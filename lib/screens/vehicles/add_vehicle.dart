@@ -48,6 +48,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   late bool isNewVehicle = true;
 
   late VehiclesProvider vehiclesProvider;
+  late String buttonText;
 
   @override
   void initState() {
@@ -65,15 +66,18 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
       isNewVehicle = false;
     }
+ 
+    if(isNewVehicle) {
+      buttonText = 'Add vehicle';
+    } else {
+      buttonText = 'Update vehicle';
+    }
   }
 
   @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-
-    vehiclesProvider = Provider.of<VehiclesProvider>(context);
-    final vehiclesList = vehiclesProvider.getVehicles;
+  void didChangeDependencies() { 
+    super.didChangeDependencies(); 
+    vehiclesProvider = Provider.of<VehiclesProvider>(context); 
   }
 
 //   Exception has occurred.
@@ -167,14 +171,10 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     }
   }
 
-  Album parseForgotPassword(String responseBody) {
-    final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-    return parsed.map<Album>((json) => Album.fromJson(json)).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
+    bool isNewVehicleValue = isNewVehicle;
     return Scaffold(
       // backgroundColor: Colors.blue,
       body: LoadingManager(
@@ -256,7 +256,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                     height: 15,
                   ),
                   AuthButton(
-                    buttonText: 'Add vehicle',
+                    buttonText: buttonText,
                     fct: () {
                       addOrUpdateVehicle();
                     },

@@ -30,8 +30,7 @@ class VehiclesProvider with ChangeNotifier {
 
   void updateVehicle(VehiclesModel data) {
     int index = _vehicles.indexWhere((element) =>
-        element.UserDeviceVehicleID == data.UserDeviceVehicleID &&
-        element.UserDeviceID == data.UserDeviceID);
+        element.UserDeviceVehicleID == data.UserDeviceVehicleID );
     _vehicles[index] = data;
     notifyListeners();
   }

@@ -46,43 +46,49 @@ class _VehicleWidgetState extends State<VehicleWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final vehicleModel = Provider.of<VehiclesModel>(context);
+    var vehicleModel = Provider.of<VehiclesModel>(context);
 
     final vehiclesProvider = Provider.of<VehiclesProvider>(context);
 
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
     return ListTile(
-      onTap: () {
-        GlobalMethods.navigateTo(
-                        ctx: context, routeName: AddVehicleScreen.routeName);
-      },
-      title: TextWidget(
-          text: '${vehicleModel.Name}', color: color, textSize: 18),
-      subtitle: Text(vehicleModel.Ticket),
-
-      trailing: IconButton(
-        onPressed: () {
-          GlobalMethods.warningDialog(
-              title: 'Delete this vehicle?',
-              subtitle: 'Are you sure?',
-              fct: () async {
-                var vehicleList = await AuthenticationServices().deleteVehicle(
-                    vehicleModel.Ticket,
-                    vehicleModel.UserDeviceVehicleID,
-                    context);
-                if (vehicleList.success) {
-                  vehiclesProvider.deleteVehicle(index);
-                }
-              },
-              context: context);
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddVehicleScreen(
+                vehicleNameParam: vehicleModel.Name,
+                vehiclePlateNumberParam: vehicleModel.Ticket,
+                userDeviceVehicleIDParam: vehicleModel.UserDeviceVehicleID,
+              ),
+            ),
+          );
         },
-        icon: Icon(
-          IconlyBroken.delete,
-          color: color,
-        ),
-      )
-      // trailing: TextWidget(text: orderDateToShow, color: color, textSize: 18),
-    );
+        title: TextWidget(
+            text: '${vehicleModel.Name}', color: color, textSize: 18),
+        subtitle: Text(vehicleModel.Ticket),
+        trailing: IconButton(
+          onPressed: () {
+            GlobalMethods.warningDialog(
+                title: 'Delete this vehicle?',
+                subtitle: 'Are you sure?',
+                fct: () async {
+                  var vehicleList = await AuthenticationServices()
+                      .deleteVehicle(vehicleModel.Ticket,
+                          vehicleModel.UserDeviceVehicleID, context);
+                  if (vehicleList.success) {
+                    vehiclesProvider.deleteVehicle(index);
+                  }
+                },
+                context: context);
+          },
+          icon: Icon(
+            IconlyBroken.delete,
+            color: color,
+          ),
+        )
+        // trailing: TextWidget(text: orderDateToShow, color: color, textSize: 18),
+        );
   }
 }

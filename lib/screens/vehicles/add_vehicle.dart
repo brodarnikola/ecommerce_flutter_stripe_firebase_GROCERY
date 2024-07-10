@@ -107,7 +107,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
       try {
         var response = await AuthenticationServices().addOrUpdateVehicle(
             _nameTextController.text.toUpperCase().trim(),
-            _plateNumberTextController.text.toUpperCase().trim(),
+            _plateNumberTextController.text.toLowerCase().trim(),
             userDeviceVehicleID,
             isNewVehicle,
             context);

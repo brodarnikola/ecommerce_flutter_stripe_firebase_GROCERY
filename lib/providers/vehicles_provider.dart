@@ -1,11 +1,8 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:grocery_app/models/vehicles_model.dart';
-import 'package:grocery_app/services/authentication_services.dart';
-
-import 'package:http/http.dart' as http;
+import 'package:grocery_app/services/authentication_services.dart'; 
 
 class VehiclesProvider with ChangeNotifier {
   static List<VehiclesModel> _vehicles = [];

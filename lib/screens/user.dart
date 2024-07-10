@@ -10,6 +10,7 @@ import 'package:grocery_app/consts/DIO_package/response.dart';
 import 'package:grocery_app/consts/firebase_consts.dart';
 import 'package:grocery_app/models/album_model.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
+import 'package:grocery_app/screens/credit_cards/credit_cards_screen.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 import 'package:grocery_app/screens/orders/orders_screen.dart';
 import 'package:grocery_app/screens/vehicles/vehicles_screen.dart';
@@ -210,6 +211,18 @@ class _UserScreenState extends State<UserScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const VehiclesScreen(),
+                      ),
+                    ); 
+                  },
+                  color: color,
+                ),
+                _listTiles(
+                  title: 'Credit cards',
+                  icon: IconlyLight.unlock,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const CreditCardsScreen(),
                       ),
                     ); 
                   },

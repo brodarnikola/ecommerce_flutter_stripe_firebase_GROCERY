@@ -11,9 +11,11 @@ class EmptyScreen extends StatelessWidget {
       required this.imagePath,
       required this.title,
       required this.subtitle,
-      required this.buttonText})
+      required this.buttonText, 
+      this.route = FeedsScreen.routeName
+      })
       : super(key: key);
-  final String imagePath, title, subtitle, buttonText;
+  final String imagePath, title, subtitle, buttonText, route;
   @override
   Widget build(BuildContext context) {
     final Color color = Utils(context).color;
@@ -71,7 +73,7 @@ class EmptyScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   GlobalMethods.navigateTo(
-                      ctx: context, routeName: FeedsScreen.routeName);
+                      ctx: context, routeName: route); //FeedsScreen.routeName);
                 },
                 child: TextWidget(
                   text: buttonText,

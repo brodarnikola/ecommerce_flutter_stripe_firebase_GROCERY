@@ -10,7 +10,7 @@ import '../../services/utils.dart';
 import '../../widgets/text_widget.dart'; 
 
 class VehiclesScreen extends StatefulWidget {
-  static const routeName = '/OrderScreen';
+  static const routeName = '/VehiclesScreen';
 
   const VehiclesScreen({Key? key}) : super(key: key);
 
@@ -38,6 +38,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
             subtitle: 'Insert some vehicles :)',
             buttonText: 'Insert vehicle',
             imagePath: 'assets/images/cart.png',
+            route: '/AddVehicleScreen',
           )
         : Scaffold(
             appBar: AppBar(
@@ -49,6 +50,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                 color: color,
                 textSize: 24.0,
                 isTitle: true,
+
               ),
               backgroundColor:
                   Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),

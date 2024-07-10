@@ -75,6 +75,63 @@ class AuthenticationServices {
     }
   }
 
+  Future<ApiResponse<Object>> addOrUpdateVehicle(String ticket, String name, int userDeviceVehicleID, bool isNewVehicle, BuildContext context) async {
+    try {
+
+      final sharedPrefState =
+              Provider.of<SharedPrefsProvider>(context, listen: false); 
+
+      Map data = {
+        'Ticket': ticket,
+        'GUID': sharedPrefState.getEmail,
+        'UserDeviceVehicleID': userDeviceVehicleID,
+        'Name': name,
+      };
+
+      // UserDeviceGUID: guid,
+      //       Name: namet,
+      //       Ticket: registrationt,
+      //       UserDeviceVehicleID: selectedVehicle ? selectedVehicle.UserDeviceVehicleID : 0,
+
+      late String url;
+      if(isNewVehicle) {
+        url = "/UserDeviceVehicle/Add";
+      } else {
+        url = "/UserDeviceVehicle/Update";
+      }
+
+      String bodyData = json.encode(data);
+
+      developer.log(bodyData); 
+
+      var res = await Api().post(url,
+          data: bodyData,
+          queryParameters: {},
+          options: Options(headers: {
+            "Content-Type": "application/json",
+            "Authorization":
+                "Bearer SMmbBOkpl6DN7vYTQ-OAd1XBPRcsb2ZV2802-KNQ8Xak90zqmI09Krlv2XtM37atAJO2f9LB0qakV6bbQmDd1LyJG0_TO4NgE-4mt0Kz27iZ0fDfJVDIIb2695xcIldvFRCO9upUcxf0xQw9vS3BlHcZ9NqPZMvTyPIQWBlHiwMaumsahVSlMmOfhOX0OFPirMMWkaD8g8af-FqmT60DxFYpc-R7plibBaEXa_coq7DlbOSiX_9DbMpE-4X42Hg5wIS5r_4d4nUBj9LY9oRLI10SMbxTw1IocLKufiCV-eqj4Na4_KwWVdd0HSkH-r7yVho-ZD51ZuaybURkuo6Jseu-jOlg5QAGIJU7CvfUS42rEBTD-FVukeOkjvEJQWd9jGEn016U2i7bUrUBnrxpxx3Qfm0uRTerDJFHK8vcNXEySahfqBZzpOkte1uuiHWOEJ7jYKLF8UBC2lsmLXwvrZFniRodA-rHVAItGSd70FM"
+            // "Bearer $token",
+          }),
+          addRequestInterceptor: false,
+          cancelToken: null,
+          onReceiveProgress: (p0, p1) => {});
+
+      print("11 vehicles response body is 11  ${res?.data}"); 
+
+      var apiRes = ApiResponse<Object>(
+        success: true,
+        message: "Success",
+        data:Object(), 
+      ); 
+
+      return apiRes;
+    } catch (err) {
+      print("Catched vehicle exception is $err");
+      throw Exception(err.toString());
+    }
+  }
+
   Future<ApiResponse<Object>> deleteVehicle(String ticket, int userDeviceVehicleID, BuildContext context) async {
     try {
 
@@ -90,9 +147,7 @@ class AuthenticationServices {
 
       String bodyData = json.encode(data);
 
-      developer.log(bodyData);
-
-      // String bodyData = json.encode(data);
+      developer.log(bodyData); 
 
       var res = await Api().post("/UserDeviceVehicle/Delete",
           data: bodyData,
@@ -107,29 +162,13 @@ class AuthenticationServices {
           cancelToken: null,
           onReceiveProgress: (p0, p1) => {});
 
-      print("11 vehicles response body is 11  ${res?.data}");
-
-      // List<dynamic> jsonData = res?.data;
-      // List<VehiclesModel> vehicles = VehiclesModel.fromJsonList(jsonData);
-      // // Now you have a list of VehiclesModel objects
-      // // You can print or use them as you wish
-      // for (var vehicle in vehicles) {
-      //   print(vehicle.Name);
-      // }
-
-      // print("22 vehicles response body is 22  ${vehicles}");
-      // // var correctData = VehiclesModel.fromJsonList(res?.data);
+      print("11 vehicles response body is 11  ${res?.data}"); 
 
       var apiRes = ApiResponse<Object>(
         success: true,
         message: "Success",
         data:Object(), 
-      );
-
-      // // print("vehicles body ${apiRes.data}");
-      // apiRes.data.forEach((element) {
-      //   print("vehicles body ${element}");
-      // });
+      ); 
 
       return apiRes;
     } catch (err) {

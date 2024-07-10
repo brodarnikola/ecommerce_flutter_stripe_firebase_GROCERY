@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_app/models/vehicles_model.dart';
 import 'package:grocery_app/providers/vehicles_provider.dart';
+import 'package:grocery_app/screens/vehicles/add_vehicle.dart';
 import 'package:grocery_app/services/authentication_services.dart';
 import 'package:grocery_app/services/global_methods.dart';
 import 'package:provider/provider.dart';
@@ -52,6 +53,12 @@ class _VehicleWidgetState extends State<VehicleWidget> {
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
     return ListTile(
+      onTap: () {
+        GlobalMethods.navigateTo(
+                        ctx: context, routeName: AddVehicleScreen.routeName);
+      },
+      title: TextWidget(
+          text: '${vehicleModel.Name}', color: color, textSize: 18),
       subtitle: Text(vehicleModel.Ticket),
 
       trailing: IconButton(
@@ -74,9 +81,7 @@ class _VehicleWidgetState extends State<VehicleWidget> {
           IconlyBroken.delete,
           color: color,
         ),
-      ),
-      title: TextWidget(
-          text: '${vehicleModel.Name}', color: color, textSize: 18),
+      )
       // trailing: TextWidget(text: orderDateToShow, color: color, textSize: 18),
     );
   }

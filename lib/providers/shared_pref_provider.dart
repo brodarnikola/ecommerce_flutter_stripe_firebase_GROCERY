@@ -20,6 +20,9 @@ class SharedPrefsProvider with ChangeNotifier {
   String _passwordSP = "";
   String get getPassword => _passwordSP;
 
+  String _guidSP = "";
+  String get getGUID => _guidSP;
+
   set setDarkTheme(bool value) {
     _darkTheme = value;
     darkThemePrefs.setDarkTheme(value);
@@ -69,6 +72,17 @@ class SharedPrefsProvider with ChangeNotifier {
   void getPasswordValue() async {
     String passwordValue = await darkThemePrefs.getPassword();
     _passwordSP = passwordValue;
+  }
+
+  set setGUID(String value) {
+    _guidSP = value;
+    darkThemePrefs.setGUID(value);
+    notifyListeners();
+  }
+
+  void getGUIDValue() async {
+    String guidValue = await darkThemePrefs.getGUID();
+    _guidSP = guidValue;
   }
 
 

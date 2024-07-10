@@ -5,18 +5,22 @@ class Login {
   final String firstName;
   final String lastName;
   final String email;
+  final String userDeviceGUID;
+  
 
-  Login(this.firstName, this.lastName, this.email);
+  Login(this.firstName, this.lastName, this.email, this.userDeviceGUID);
 
   Login.fromJson(Map<String, dynamic> json)
       : firstName = json['firstName'] as String,
         lastName = json['lastName'] as String,
-        email = json['email'] as String;
+        email = json['email'] as String,
+        userDeviceGUID = json['userDeviceGUID'] as String;
 
   Map<String, dynamic> toJson() => {
         'firstName': firstName,
         'lastName': lastName,
-        'title': email,
+        'email': email,
+        'userDeviceGUID': userDeviceGUID,
       };   
 } 
 

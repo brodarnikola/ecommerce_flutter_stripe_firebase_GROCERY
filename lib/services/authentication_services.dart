@@ -75,15 +75,15 @@ class AuthenticationServices {
     }
   }
 
-  Future<ApiResponse<Object>> addOrUpdateVehicle(String ticket, String name, int userDeviceVehicleID, bool isNewVehicle, BuildContext context) async {
+  Future<ApiResponse<Object>> addOrUpdateVehicle(String name, String plateNumber, int userDeviceVehicleID, bool isNewVehicle, BuildContext context) async {
     try {
 
       final sharedPrefState =
               Provider.of<SharedPrefsProvider>(context, listen: false); 
 
       Map data = {
-        'Ticket': ticket,
-        'GUID': sharedPrefState.getEmail,
+        'Ticket': plateNumber,
+        'UserDeviceGUID': sharedPrefState.getGUID,
         'UserDeviceVehicleID': userDeviceVehicleID,
         'Name': name,
       };

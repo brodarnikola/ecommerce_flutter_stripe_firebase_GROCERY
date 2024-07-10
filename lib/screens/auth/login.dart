@@ -177,11 +177,13 @@ class _LoginScreenState extends State<LoginScreen> {
     final String firstName = responseBody.firstName; // parsed['firstName'];
     final String lastName = responseBody.lastName; // parsed['lastName'];
     final String email = responseBody.email; // parsed['email'];
+    final String userDeviceGUID = responseBody.userDeviceGUID;
 
     setState(() {
       sharedPrefState.setIsLoggedIn = true;
       sharedPrefState.setUsername = "$firstName $lastName";
       sharedPrefState.setEmail = email;
+      sharedPrefState.setGUID = userDeviceGUID;
     });
 
     // SharedPreferences prefs = await SharedPreferences.getInstance();

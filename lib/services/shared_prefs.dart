@@ -10,6 +10,8 @@ class SharedPrefs {
 
   static const String PASSWORD = "password";
 
+  static const String GUID = "guid";
+
   setDarkTheme(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool(THEME_STATUS, value);
@@ -58,6 +60,16 @@ class SharedPrefs {
   Future<String> getPassword() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(PASSWORD) ?? "";
+  }
+
+   setGUID(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(GUID, value);
+  }
+
+  Future<String> getGUID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(GUID) ?? "";
   }
 
 }

@@ -1,24 +1,30 @@
+
+ 
+
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
-import 'package:grocery_app/models/credit_cards_model.dart'; 
+import 'package:grocery_app/models/credit_cards_model.dart';
+import 'package:grocery_app/services/authentication_services.dart'; 
 
 class CreditCardsProvider with ChangeNotifier {
-  static List<CreditCardsModel> _vehicles = [];
-  List<CreditCardsModel> get getVehicles {
-    return _vehicles;
+  static List<CreditCardsModel> _creditCards = [];
+  List<CreditCardsModel> get getCreditCards {
+    return _creditCards;
   }
 
   void clearVehicles() {
-    _vehicles.clear();
+    _creditCards.clear();
     notifyListeners();
   }
 
   void deleteVehicle(int index) {
-    _vehicles.removeAt(index);
+    _creditCards.removeAt(index);
     notifyListeners();
   }
 
   void addVehicle(CreditCardsModel data) {
-    _vehicles.add(data);
+    _creditCards.add(data);
     notifyListeners();
   }
 
@@ -29,14 +35,14 @@ class CreditCardsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchVehicles() async {
-    // var response = await AuthenticationServices().getVehicles();
+  Future<void> fetchCreditCards() async {
+   var response = await AuthenticationServices().getCreditCards();
 
-    // log("vehicles  ${response}");
-    // if (response.success && response.data != null) {
-    //   log("vehicles body ${response.data}");
-    //   _vehicles.addAll(response.data);
-    // }
+    log("credit cards  ${response}");
+    if (response.success && response.data != null) {
+      log("credit cards body ${response.data}");
+      _creditCards.addAll(response.data);
+    }
     notifyListeners();
   }
 }

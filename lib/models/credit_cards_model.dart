@@ -3,7 +3,8 @@ import 'package:flutter/cupertino.dart';
 
 class CreditCardsModel with ChangeNotifier {
   final int UserDeviceCardID, UserDeviceID, CardTypeID, ExpirationNotificationID, PGCreditCardBrandID, Success;
-  final String ExpirationDate,  DateTimeCreated;
+  final String ExpirationDate; 
+  // DateTimeCreated;
 
   final String? Message, UserDeviceGUID, ErrorMessage;
 
@@ -25,7 +26,7 @@ class CreditCardsModel with ChangeNotifier {
       this.ExpirationDate,
       this.UserDeviceGUID,
 
-      this.DateTimeCreated,
+      // this.DateTimeCreated,
 
       this.Message,
       this.ErrorMessage
@@ -47,7 +48,7 @@ class CreditCardsModel with ChangeNotifier {
         ExpirationDate = json['ExpirationDate'] as String,
         UserDeviceGUID = json['UserDeviceGUID'] != null ? json['UserDeviceGUID'] as String : null,
 
-        DateTimeCreated = json['DateTimeCreated'] as String,
+        // DateTimeCreated = json['DateTimeCreated'] as String,
 
         Message = json['Message'] != null ? json['Message'] as String : null,
         ErrorMessage = json['ErrorMessage'] != null ? json['ErrorMessage'] as String : null;
@@ -68,13 +69,20 @@ class CreditCardsModel with ChangeNotifier {
         'ExpirationDate': ExpirationDate,
         'UserDeviceGUID': UserDeviceGUID,
 
-        'DateTimeCreated': DateTimeCreated,
+        // 'DateTimeCreated': DateTimeCreated,
 
         'Message': Message,
         'ErrorMessage': ErrorMessage, 
         // 'orderDate': orderDate,
       };
 
+// grant_type=password&source=mobileapp&username=ipavelic1%40gmail.com&password=TestirajMe76!&uuid=ipavelic1%40gmail.com&
+// deviceOS=Browser&
+// notificationRegID=eyJt_vSrRu2sxIQkTK_GSn%3AAPA91bGcxo7a2MvikhTta22e63R7696Z0hxv7hLbVHULjLmaSwN_OovuBRYWuBmXNtXcFHU4rmAhDHllSGWrymvgcxOvBt5axMo66CO1CI1VaMNnZF5lfXL6QM5-kJgBBAR9Y7j3up1M&
+// languageID=1
+
+// [{UserDeviceCardID: 30, UserDeviceGUID: 00000000-0000-0000-0000-000000000000, UserDeviceID: 23, ExpirationDate: 2025-12-31T00:00:00, CardTypeID: 2, ExpirationNotificationID: 386, Modified: 2024-07-10T14:15:33.573, 
+// Token: 8b9c5084-79af-43ba-aba8-46128107702c, TokenNumber: 9023, TokenExp: 2512, PGCreditCardBrandID: 7, MaskedCreditCardNumber: 457418------9023, Message: null, ErrorMessage: null, Success: 0}]
 
   static List<CreditCardsModel> fromJsonList(List<dynamic> jsonList) {
     return jsonList.map((item) => CreditCardsModel.fromJson(item as Map<String, dynamic>)).toList();

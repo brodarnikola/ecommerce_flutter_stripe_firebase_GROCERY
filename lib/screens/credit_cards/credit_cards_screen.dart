@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:grocery_app/providers/credit_cards_provider.dart';
 import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:grocery_app/screens/vehicles/add_vehicle.dart';
@@ -7,6 +8,7 @@ import 'package:grocery_app/services/global_methods.dart';
 import 'package:grocery_app/widgets/back_widget.dart';
 import 'package:grocery_app/widgets/empty_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:u_credit_card/u_credit_card.dart';
 
 import '../../services/utils.dart';
 import '../../widgets/text_widget.dart';
@@ -33,7 +35,7 @@ class _CreditCardsScreenState extends State<CreditCardsScreen> {
     // Size size = Utils(context).getScreenSize;
 
     final creditCardsProvider = Provider.of<CreditCardsProvider>(context);
-    final creditCardsList = creditCardsProvider.getVehicles;
+    final creditCardsList = creditCardsProvider.getCreditCards;
 
     return creditCardsList.isEmpty
         ? const EmptyScreen(
@@ -65,8 +67,19 @@ class _CreditCardsScreenState extends State<CreditCardsScreen> {
                       const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
                   child: ChangeNotifierProvider.value(
                     value: creditCardsList[index],
-                    child: VehicleWidget(
-                        index: index), // Pass the index as a named argument
+                    child: CreditCardUi(
+                      cardHolderFullName: 'John Doe',
+                      cardNumber: creditCardsList[index].MaskedCreditCardNumber,
+                      validThru: creditCardsList[index].TokenExp,
+                      validFrom: '01/23',
+
+                      topLeftColor: Colors.blue,
+                      showBalance: true,
+                      balance: 128.32434343,
+
+                      enableFlipping: true, // 👈 Enables the flipping
+                      cvvNumber: '123', // 👈 CVV number t
+                    ),
                   ),
                 );
               },

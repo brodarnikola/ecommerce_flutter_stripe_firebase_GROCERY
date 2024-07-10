@@ -63,17 +63,13 @@ class _AccountActivationScreenState extends State<AccountActivationScreen> {
             _confirmationCodeTextController.text.trim());
 
         if (response.success && response.data != null) {
-
-
-
-      final sharedPrefState =
-          Provider.of<SharedPrefsProvider>(context, listen: false);
+          final sharedPrefState =
+              Provider.of<SharedPrefsProvider>(context, listen: false);
 
           print('Succefully account confirmation');
           developer.log("Succefully account confirmation in ${response}");
           developer
               .log("Succefully account confirmation in body ${response.data}");
-
 
           var loginResponse = await UserNetworkService()
               .loginUser(sharedPrefState.getEmail, sharedPrefState.getPassword);
@@ -119,7 +115,7 @@ class _AccountActivationScreenState extends State<AccountActivationScreen> {
     }
   }
 
-   // void saveData(String responseBody) async {
+  // void saveData(String responseBody) async {
   void saveData(Login responseBody) async {
     final sharedPrefState =
         Provider.of<SharedPrefsProvider>(context, listen: false);

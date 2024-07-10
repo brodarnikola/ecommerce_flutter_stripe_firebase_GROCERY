@@ -61,7 +61,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                       const EdgeInsets.symmetric(horizontal: 2, vertical: 6),
                   child: ChangeNotifierProvider.value(
                     value: vehiclesList[index],
-                    child: const VehicleWidget(),
+                    child: VehicleWidget(index: index), // Pass the index as a named argument
                   ),
                 );
               },

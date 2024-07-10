@@ -19,6 +19,11 @@ class VehiclesProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void deleteVehicle(int index) {
+    _vehicles.removeAt(index);
+    notifyListeners();  
+  }
+
   // Future<Album> fetchAlbum() async {
   //   final response = await http
   //       .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/2'));

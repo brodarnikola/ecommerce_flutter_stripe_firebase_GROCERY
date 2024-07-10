@@ -5,8 +5,7 @@ import 'package:grocery_app/screens/vehicles/vehicle_widget.dart';
 import 'package:grocery_app/widgets/back_widget.dart';
 import 'package:grocery_app/widgets/empty_screen.dart';
 import 'package:provider/provider.dart';
-
-import '../../providers/orders_provider.dart';
+ 
 import '../../services/utils.dart';
 import '../../widgets/text_widget.dart'; 
 
@@ -21,22 +20,14 @@ class VehiclesScreen extends StatefulWidget {
 
 class _VehiclesScreenState extends State<VehiclesScreen> {
   @override
-  void initState() {
-    final ordersProvider = Provider.of<OrdersProvider>(context, listen: false);
-    ordersProvider.fetchOrders();
-
-    final vehiclesProvider = Provider.of<VehiclesProvider>(context, listen: false);
-    vehiclesProvider.fetchVehicles();
+  void initState() { 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final Color color = Utils(context).color;
-    // Size size = Utils(context).getScreenSize;
-
-    final ordersProvider = Provider.of<OrdersProvider>(context);
-    final ordersList = ordersProvider.getOrders;
+    // Size size = Utils(context).getScreenSize; 
 
     final vehiclesProvider = Provider.of<VehiclesProvider>(context);
     final vehiclesList = vehiclesProvider.getVehicles;

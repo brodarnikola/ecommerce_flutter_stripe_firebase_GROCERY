@@ -12,6 +12,8 @@ class SharedPrefs {
 
   static const String GUID = "guid";
 
+  static const String BEARER_TOKEN = "bearer_token";
+
   setDarkTheme(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool(THEME_STATUS, value);
@@ -62,7 +64,7 @@ class SharedPrefs {
     return prefs.getString(PASSWORD) ?? "";
   }
 
-   setGUID(String value) async {
+  setGUID(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(GUID, value);
   }
@@ -72,4 +74,13 @@ class SharedPrefs {
     return prefs.getString(GUID) ?? "";
   }
 
+  setBearerToken(String value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(BEARER_TOKEN, value);
+  }
+
+  Future<String> getBearerToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString(BEARER_TOKEN) ?? "";
+  }
 }

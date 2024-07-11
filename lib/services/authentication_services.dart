@@ -233,4 +233,48 @@ class AuthenticationServices {
       throw Exception(err.toString());
     }
   }
+
+ Future<ApiResponse<Object>> deleteCreditCard(int userDeviceCardID, BuildContext context) async {
+    try {
+
+      final sharedPrefState =
+              Provider.of<SharedPrefsProvider>(context, listen: false); 
+
+      Map data = {
+        'UserDeviceCardID': userDeviceCardID,
+        'UserDeviceGUID': sharedPrefState.getGUID
+      };
+
+      String bodyData = json.encode(data);
+
+      developer.log(bodyData); 
+
+      var res = await Api().post("/UserDeviceCard/Delete",
+          data: bodyData,
+          queryParameters: {},
+          options: Options(headers: {
+            "Content-Type": "application/json",
+            "Authorization":
+                "Bearer ${sharedPrefState.getBearerToken}"
+            // "Bearer $token",
+          }),
+          addRequestInterceptor: false,
+          cancelToken: null,
+          onReceiveProgress: (p0, p1) => {});
+
+      print("11 credit card response body is 11  ${res?.data}"); 
+
+      var apiRes = ApiResponse<Object>(
+        success: true,
+        message: "Success",
+        data: Object(), 
+      ); 
+
+      return apiRes;
+    } catch (err) {
+      print("Catched vehicle exception is $err");
+      throw Exception(err.toString());
+    }
+  }
+
 }

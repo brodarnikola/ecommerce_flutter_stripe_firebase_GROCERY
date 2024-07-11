@@ -11,29 +11,19 @@ class CreditCardsProvider with ChangeNotifier {
   static List<CreditCardsModel> _creditCards = [];
   List<CreditCardsModel> get getCreditCards {
     return _creditCards;
-  }
+  } 
 
-  void clearVehicles() {
-    _creditCards.clear();
+  void deleteCreditCard(int userDeviceCardID) {
+    int removeIndexItem = _creditCards.indexWhere((element) =>
+        element.UserDeviceCardID == userDeviceCardID );
+    _creditCards.removeAt(removeIndexItem);
     notifyListeners();
   }
 
-  void deleteVehicle(int index) {
-    _creditCards.removeAt(index);
-    notifyListeners();
-  }
-
-  void addVehicle(CreditCardsModel data) {
+  void addCreditCard(CreditCardsModel data) {
     _creditCards.add(data);
     notifyListeners();
-  }
-
-  void updateVehicle(CreditCardsModel data) {
-    // int index = _vehicles.indexWhere((element) =>
-    //     element.UserDeviceVehicleID == data.UserDeviceVehicleID );
-    // _vehicles[index] = data;
-    notifyListeners();
-  }
+  } 
 
   Future<void> fetchCreditCards() async {
    var response = await AuthenticationServices().getCreditCards();

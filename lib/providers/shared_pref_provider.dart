@@ -23,6 +23,9 @@ class SharedPrefsProvider with ChangeNotifier {
   String _guidSP = "";
   String get getGUID => _guidSP;
 
+  String _bearerTokenSP = "";
+  String get getBearerToken => _bearerTokenSP;
+
   set setDarkTheme(bool value) {
     _darkTheme = value;
     darkThemePrefs.setDarkTheme(value);
@@ -83,6 +86,17 @@ class SharedPrefsProvider with ChangeNotifier {
   void getGUIDValue() async {
     String guidValue = await darkThemePrefs.getGUID();
     _guidSP = guidValue;
+  }
+
+  set setBearerToken(String value) {
+    _bearerTokenSP = value;
+    darkThemePrefs.setBearerToken(value);
+    notifyListeners();
+  }
+
+  void getBearerTokenValue() async {
+    String bearerTokenValue = await darkThemePrefs.getBearerToken();
+    _bearerTokenSP = bearerTokenValue;
   }
 
 

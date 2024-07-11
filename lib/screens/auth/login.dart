@@ -173,23 +173,15 @@ class _LoginScreenState extends State<LoginScreen> {
     final sharedPrefState =
         Provider.of<SharedPrefsProvider>(context, listen: false);
 
-    // final Map<String, dynamic> parsed = jsonDecode(responseBody);
-    final String firstName = responseBody.firstName; // parsed['firstName'];
-    final String lastName = responseBody.lastName; // parsed['lastName'];
-    final String email = responseBody.email; // parsed['email'];
-    final String userDeviceGUID = responseBody.userDeviceGUID;
+    // final Map<String, dynamic> parsed = jsonDecode(responseBody); 
 
     setState(() {
       sharedPrefState.setIsLoggedIn = true;
-      sharedPrefState.setUsername = "$firstName $lastName";
-      sharedPrefState.setEmail = email;
-      sharedPrefState.setGUID = userDeviceGUID;
-    });
-
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // await prefs.setBool(isLoggedIn, true);
-    // await prefs.setString(usernameSP, username);
-    // await prefs.setString(emailSP, email);
+      sharedPrefState.setUsername = "${responseBody.firstName} ${responseBody.lastName}";
+      sharedPrefState.setEmail = responseBody.email;
+      sharedPrefState.setGUID = responseBody.userDeviceGUID;
+      sharedPrefState.setBearerToken = responseBody.access_token;
+    }); 
   }
 
   @override

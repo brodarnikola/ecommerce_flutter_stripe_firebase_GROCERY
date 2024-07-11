@@ -13,6 +13,10 @@ class GlobalMethods {
     Navigator.pushNamed(ctx, routeName);
   }
 
+  static navigateBack({required BuildContext ctx}) {
+    Navigator.pop(ctx);
+  }
+
   static String getDateFromDateTimeString(String dateStr) {
     DateTime date = DateTime.parse(dateStr);
     DateTime todayDate = DateTime.now();

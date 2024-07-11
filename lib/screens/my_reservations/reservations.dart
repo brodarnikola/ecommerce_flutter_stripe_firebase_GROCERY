@@ -37,11 +37,12 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
 
     return vehiclesList.isEmpty
         ? const EmptyScreen(
-            title: 'You dont have any reservations yet!',
-            subtitle: 'Insert some vehicles :)',
-            buttonText: 'Insert vehicle',
+            title: 'You dont have any reservations!',
+            subtitle: '',
+            buttonText: 'Back',
             imagePath: 'assets/images/cart.png',
-            route: '/AddVehicleScreen',
+            route: '/UserScreen',
+            navigateBack: true,
           )
         : Scaffold(
             appBar: AppBar(

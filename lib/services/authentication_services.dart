@@ -5,6 +5,7 @@ import 'package:grocery_app/consts/DIO_package/dio_package.dart';
 import 'package:grocery_app/consts/DIO_package/response.dart';
 import 'package:grocery_app/models/credit_cards_model.dart';
 import 'package:grocery_app/models/reservations_model.dart';
+import 'package:grocery_app/models/transactions_model.dart';
 import 'dart:developer' as developer;
 
 import 'package:grocery_app/models/vehicles_model.dart';
@@ -20,14 +21,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationServices {
 
-Future<ApiResponse<List<ReservationsModel>>> getPayments(BuildContext context) async {
+Future<ApiResponse<List<TransactionModel>>> getTransactions(BuildContext context) async {
     try { 
 
       final sharedPrefState =
           Provider.of<SharedPrefsProvider>(context, listen: false);
 
       var res = await Api().get(
-          "/getreservations?guid=${sharedPrefState.getGUID}&samoAktivne=1",
+          "/gettransactions?guid=${sharedPrefState.getGUID}&samoAktivne=1",
           queryParameters: {},
           options: Options(headers: {
             "Content-Type": "application/json",
@@ -38,43 +39,29 @@ Future<ApiResponse<List<ReservationsModel>>> getPayments(BuildContext context) a
           cancelToken: null,
           onReceiveProgress: (p0, p1) => {});
 
-      print("11 reservations response body is 11  ${res?.data}");
+      print("11 Transactions response body is 11  ${res?.data}");
 
-      List<dynamic> jsonData = res?.data;
-      List<ReservationsModel> reservations = ReservationsModel.fromJsonList(jsonData);
-      // Now you have a list of Reservatiosn objects
+      Map<String, dynamic> jsonData = res?.data;
+      TransactionResponse transactionResponse = TransactionResponse.fromJson(jsonData); 
+      // Now you have a list of Transactions objects
       // You can print or use them as you wish
-      for (var vehicle in reservations) {
-        print(vehicle.RotoGarazaNaziv);
+      for (var transaction in transactionResponse.transactions) {
+        print(transaction.registracija);
       } 
 
-      var apiRes = ApiResponse<List<ReservationsModel>>(
+      var apiRes = ApiResponse<List<TransactionModel>>(
         success: true,
         message: "Success",
-        data: reservations,
+        data: transactionResponse.transactions,
       );
  
       apiRes.data.forEach((element) {
-        print("vehicles body ${element}");
+        print("Transactions body ${element}");
       }); 
-
-      // [
-//     {
-//         "RezervacijaID": 75,
-//         "RotoGarazaID": 18,
-//         "TipSlotID": 1,
-//         "TipSlotNaziv": "Rezervacija - bez punjača",
-//         "RotoGarazaNaziv": "Garaža Zagreb",
-//         "Registracija": "ck201gl",
-//         "Pocetak": "2024-07-11T09:00:00",
-//         "Kraj": "2024-07-11T10:00:00",
-//         "PlaceniIznos": 93
-//     }
-// ]
 
       return apiRes;
     } catch (err) {
-      print("Catched reservation exception is $err");
+      print("Catched transactions exception is $err");
       throw Exception(err.toString());
     }
   }
@@ -117,21 +104,7 @@ Future<ApiResponse<List<ReservationsModel>>> getPayments(BuildContext context) a
       apiRes.data.forEach((element) {
         print("vehicles body ${element}");
       });
-
-      // [
-//     {
-//         "RezervacijaID": 75,
-//         "RotoGarazaID": 18,
-//         "TipSlotID": 1,
-//         "TipSlotNaziv": "Rezervacija - bez punjača",
-//         "RotoGarazaNaziv": "Garaža Zagreb",
-//         "Registracija": "ck201gl",
-//         "Pocetak": "2024-07-11T09:00:00",
-//         "Kraj": "2024-07-11T10:00:00",
-//         "PlaceniIznos": 93
-//     }
-// ]
-
+ 
       return apiRes;
     } catch (err) {
       print("Catched reservation exception is $err");

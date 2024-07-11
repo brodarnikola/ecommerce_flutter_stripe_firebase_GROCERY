@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_app/providers/payments_provider.dart';
+import 'package:grocery_app/providers/transactions_provider.dart';
 import 'package:grocery_app/providers/reservations_provider.dart';
 import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
@@ -13,16 +13,16 @@ import 'package:provider/provider.dart';
 import '../../services/utils.dart';
 import '../../widgets/text_widget.dart';
 
-class PaymentsScreen extends StatefulWidget {
-  static const routeName = '/PaymentsScreen';
+class TransactionsScreen extends StatefulWidget {
+  static const routeName = '/TransactionsScreen';
 
-  const PaymentsScreen({Key? key}) : super(key: key);
+  const TransactionsScreen({Key? key}) : super(key: key);
 
   @override
-  State<PaymentsScreen> createState() => _PaymentsScreenState();
+  State<TransactionsScreen> createState() => _TransactionsScreenState();
 }
 
-class _PaymentsScreenState extends State<PaymentsScreen> {
+class _TransactionsScreenState extends State<TransactionsScreen> {
   bool _isLoading = false;
 
   @override
@@ -36,8 +36,8 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
     final themeState = Utils(context).getTheme;
     // Size size = Utils(context).getScreenSize;
 
-    final paymentsProvider = Provider.of<PaymentsProvider>(context);
-    final paymentsList = paymentsProvider.getPayments;
+    final paymentsProvider = Provider.of<TransactionsProvider>(context);
+    final paymentsList = paymentsProvider.getTransactions;
 
     return paymentsList.isEmpty
         ? const EmptyScreen(
@@ -77,45 +77,45 @@ class _PaymentsScreenState extends State<PaymentsScreen> {
                             children: [
                               TextWidget(
                                   text:
-                                      '${paymentsList[index].RotoGarazaNaziv}',
+                                      '${paymentsList[index].garazaNaziv}',
                                   color: color,
                                   textSize: 18),
                               const SizedBox(
                                 height: 2,
                               ),
                               TextWidget(
-                                  text: '${paymentsList[index].Registracija}',
+                                  text: '${paymentsList[index].maskedCreditCardNumber}',
                                   color: color,
                                   textSize: 18),
                               const SizedBox(
                                 height: 2,
                               ),
                               TextWidget(
-                                  text: '${paymentsList[index].TipSlotNaziv}',
+                                  text: '${paymentsList[index].parkingTvrtkaNaziv}',
                                   color: color,
                                   textSize: 18),
                               const SizedBox(
                                 height: 2,
                               ),
+                              // TextWidget(
+                              //     text:
+                              //         '${GlobalMethods.getDateFromDateTimeString(paymentsList[index].secondsLeft ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(paymentsList[index].Pocetak ?? "")}',
+                              //     color: color,
+                              //     textSize: 18),
+                              // const SizedBox(
+                              //   height: 2,
+                              // ),
+                              // TextWidget(
+                              //     text:
+                              //         '${GlobalMethods.getDateFromDateTimeString(paymentsList[index].Kraj ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(paymentsList[index].Kraj ?? "")}',
+                              //     color: color,
+                              //     textSize: 18),
+                              // const SizedBox(
+                              //   height: 2,
+                              // ),
                               TextWidget(
                                   text:
-                                      '${GlobalMethods.getDateFromDateTimeString(paymentsList[index].Pocetak ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(paymentsList[index].Pocetak ?? "")}',
-                                  color: color,
-                                  textSize: 18),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              TextWidget(
-                                  text:
-                                      '${GlobalMethods.getDateFromDateTimeString(paymentsList[index].Kraj ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(paymentsList[index].Kraj ?? "")}',
-                                  color: color,
-                                  textSize: 18),
-                              const SizedBox(
-                                height: 2,
-                              ),
-                              TextWidget(
-                                  text:
-                                      'Amount: ${(paymentsList[index].PlaceniIznos ?? 1) / 100} EUR',
+                                      'Amount: ${(paymentsList[index].amount ?? 1) / 100} EUR',
                                   color: color,
                                   textSize: 18),
                             ],

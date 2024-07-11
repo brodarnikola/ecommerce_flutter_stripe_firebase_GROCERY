@@ -249,7 +249,7 @@ class _UserScreenState extends State<UserScreen> {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => const PaymentsScreen(),
+                        builder: (context) => const TransactionsScreen(),
                       ),
                     ); 
                   },

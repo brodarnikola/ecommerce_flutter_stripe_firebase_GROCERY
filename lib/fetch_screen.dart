@@ -8,7 +8,7 @@ import 'package:grocery_app/consts/firebase_consts.dart';
 import 'package:grocery_app/providers/cart_provider.dart';
 import 'package:grocery_app/providers/credit_cards_provider.dart';
 import 'package:grocery_app/providers/orders_provider.dart';
-import 'package:grocery_app/providers/payments_provider.dart';
+import 'package:grocery_app/providers/transactions_provider.dart';
 import 'package:grocery_app/providers/reservations_provider.dart';
 import 'package:grocery_app/providers/shared_pref_provider.dart';
 import 'package:grocery_app/providers/vehicles_provider.dart';
@@ -44,8 +44,8 @@ class _FetchScreenState extends State<FetchScreen> {
           Provider.of<CreditCardsProvider>(context, listen: false);
       final reservationsProvider =
           Provider.of<ReservationsProvider>(context, listen: false);
-      final paymentsProvider =
-          Provider.of<PaymentsProvider>(context, listen: false);
+      final transactionsProvider =
+          Provider.of<TransactionsProvider>(context, listen: false);
 
       final productsProvider =
           Provider.of<ProductsProvider>(context, listen: false);
@@ -74,7 +74,7 @@ class _FetchScreenState extends State<FetchScreen> {
         await vehiclesProvider.fetchVehicles(context);
         await creditCardsProvider.fetchCreditCards(context);
         await reservationsProvider.fetchReservations(context); 
-        await paymentsProvider.fetchPayments(context);
+        await transactionsProvider.fetchTransactions(context);
 
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (ctx) => const BottomBarScreen(),

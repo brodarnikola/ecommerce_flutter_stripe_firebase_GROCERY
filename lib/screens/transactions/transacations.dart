@@ -13,6 +13,8 @@ import 'package:provider/provider.dart';
 import '../../services/utils.dart';
 import '../../widgets/text_widget.dart';
 
+import 'package:flutter/material.dart';
+
 class TransactionsScreen extends StatefulWidget {
   static const routeName = '/TransactionsScreen';
 
@@ -41,7 +43,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
 
     return paymentsList.isEmpty
         ? const EmptyScreen(
-            title: 'You dont have any payments!',
+            title: 'You dont have any transactions!',
             subtitle: '',
             buttonText: 'Back',
             imagePath: 'assets/images/cart.png',
@@ -54,7 +56,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               elevation: 0,
               centerTitle: false,
               title: TextWidget(
-                text: 'Your payments (${paymentsList.length})',
+                text: 'Your transactions (${paymentsList.length})',
                 color: color,
                 textSize: 24.0,
                 isTitle: true,
@@ -66,53 +68,63 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 isLoading: _isLoading,
                 child: Stack(children: [
                   ListView.separated(
+                    padding: const EdgeInsets.all(5),
                     itemCount: paymentsList.length,
                     itemBuilder: (ctx, index) {
-                      return Padding(
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: Colors.grey[300] ?? Colors.grey),
+                        ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 2, vertical: 6),
+                            horizontal: 20, vertical: 25),
+                        //  padding: const EdgeInsets.all(20.0),
                         child: ChangeNotifierProvider.value(
                           value: paymentsList[index],
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextWidget(
+                                  text: '${paymentsList[index].parkingTvrtkaNaziv} - ${paymentsList[index].garazaNaziv}',
+                                  color: color,
+                                  textSize: 18),
+                              const SizedBox(
+                                height: 2,
+                              ),
+                              TextWidget(
                                   text:
-                                      '${paymentsList[index].garazaNaziv}',
+                                      '${paymentsList[index].registracija}',
                                   color: color,
                                   textSize: 18),
                               const SizedBox(
                                 height: 2,
                               ),
                               TextWidget(
-                                  text: '${paymentsList[index].maskedCreditCardNumber}',
+                                  text:
+                                      '${paymentsList[index].parkingTvrtkaNaziv}',
                                   color: color,
                                   textSize: 18),
                               const SizedBox(
                                 height: 2,
                               ),
                               TextWidget(
-                                  text: '${paymentsList[index].parkingTvrtkaNaziv}',
+                                  text:
+                                      'From ${GlobalMethods.getDateFromDateTimeString(paymentsList[index].start ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(paymentsList[index].start ?? "")}',
                                   color: color,
                                   textSize: 18),
                               const SizedBox(
                                 height: 2,
                               ),
-                              // TextWidget(
-                              //     text:
-                              //         '${GlobalMethods.getDateFromDateTimeString(paymentsList[index].secondsLeft ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(paymentsList[index].Pocetak ?? "")}',
-                              //     color: color,
-                              //     textSize: 18),
-                              // const SizedBox(
-                              //   height: 2,
-                              // ),
-                              // TextWidget(
-                              //     text:
-                              //         '${GlobalMethods.getDateFromDateTimeString(paymentsList[index].Kraj ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(paymentsList[index].Kraj ?? "")}',
-                              //     color: color,
-                              //     textSize: 18),
-                              // const SizedBox(
-                              //   height: 2,
-                              // ),
+                              TextWidget(
+                                  text:
+                                      'Until ${GlobalMethods.getDateFromDateTimeString(paymentsList[index].end ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(paymentsList[index].end ?? "")}',
+                                  color: color,
+                                  textSize: 18),
+                              const SizedBox(
+                                height: 2,
+                              ),
                               TextWidget(
                                   text:
                                       'Amount: ${(paymentsList[index].amount ?? 1) / 100} EUR',
@@ -125,10 +137,13 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                       );
                     },
                     separatorBuilder: (BuildContext context, int index) {
-                      return Divider(
-                        color: color,
-                        thickness: 1,
+                      return const SizedBox(
+                        height: 10,
                       );
+                      // return Divider(
+                      //   color: color,
+                      //   thickness: 0,
+                      // );
                     },
                   )
                 ])));

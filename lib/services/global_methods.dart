@@ -37,6 +37,21 @@ class GlobalMethods {
     return DateFormat.jm().format(date); // jm format for Hour:Minute AM/PM
   }
 
+  static String convertToISO(String dateString) {
+    // Split the input string into date and time components
+    List<String> dateTimeParts = dateString.split(' ');
+
+    // Split the date component into day, month, and year
+    List<String> dateParts =
+        dateTimeParts[0].split('.').map((str) => str.padLeft(2, '0')).toList();
+
+    // Combine date and time parts into a single string
+    String combinedDateTimeString =
+        '${dateParts[2]}-${dateParts[1]}-${dateParts[0]}T${dateTimeParts[1]}:00';
+
+    return combinedDateTimeString;
+  }
+
   static Future<void> warningDialog({
     required String title,
     required String subtitle,

@@ -12,6 +12,7 @@ import 'package:grocery_app/models/vehicles_model.dart';
 
 import 'package:dio/dio.dart';
 import 'package:grocery_app/providers/shared_pref_provider.dart';
+import 'package:grocery_app/services/global_methods.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,44 +21,50 @@ import 'package:shared_preferences/shared_preferences.dart';
 // VERY IMPORTTANT TO GET DATA FROM BACKEND IS GUID OR THIS "userDeviceGUID": "05dd0494-badc-4104-9c33-3bb5849bc9c5",
 
 class AuthenticationServices {
-
-Future<ApiResponse<List<TransactionModel>>> getTransactions(BuildContext context) async {
-    try { 
-
+  Future<ApiResponse<List<TransactionModel>>> getTransactions(
+      BuildContext context) async {
+    try {
       final sharedPrefState =
           Provider.of<SharedPrefsProvider>(context, listen: false);
 
-      var res = await Api().get(
-          "/gettransactions?guid=${sharedPrefState.getGUID}&samoAktivne=1",
-          queryParameters: {},
-          options: Options(headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer ${sharedPrefState.getBearerToken}"
-             // "Bearer $token",
-          }),
-          addRequestInterceptor: false,
-          cancelToken: null,
-          onReceiveProgress: (p0, p1) => {});
+      var res = await Api()
+          .get("/gettransactions?guid=${sharedPrefState.getGUID}&samoAktivne=1",
+              queryParameters: {},
+              options: Options(headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${sharedPrefState.getBearerToken}"
+                // "Bearer $token",
+              }),
+              addRequestInterceptor: false,
+              cancelToken: null,
+              onReceiveProgress: (p0, p1) => {});
 
       print("11 Transactions response body is 11  ${res?.data}");
 
       Map<String, dynamic> jsonData = res?.data;
-      TransactionResponse transactionResponse = TransactionResponse.fromJson(jsonData); 
+      TransactionResponse transactionResponse =
+          TransactionResponse.fromJson(jsonData);
       // Now you have a list of Transactions objects
       // You can print or use them as you wish
       for (var transaction in transactionResponse.transactions) {
         print(transaction.registracija);
-      } 
+      }
+
+      final transactionModelList = transactionResponse.transactions.map((transaction) {
+        transaction.start = GlobalMethods.convertToISO(transaction.start ?? "");
+        transaction.end = GlobalMethods.convertToISO(transaction.end ?? "");
+        return transaction;
+      }).toList();
 
       var apiRes = ApiResponse<List<TransactionModel>>(
         success: true,
         message: "Success",
-        data: transactionResponse.transactions,
+        data: transactionModelList,
       );
- 
+
       apiRes.data.forEach((element) {
         print("Transactions body ${element}");
-      }); 
+      });
 
       return apiRes;
     } catch (err) {
@@ -104,7 +111,7 @@ Future<ApiResponse<List<TransactionModel>>> getTransactions(BuildContext context
       apiRes.data.forEach((element) {
         print("vehicles body ${element}");
       });
- 
+
       return apiRes;
     } catch (err) {
       print("Catched reservation exception is $err");

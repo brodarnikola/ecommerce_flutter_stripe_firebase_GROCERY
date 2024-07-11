@@ -83,10 +83,12 @@ class TransactionResponse with ChangeNotifier {
 
 
 class TransactionModel with ChangeNotifier {
-  final String? transactionID, registracija, reklamacijskiBroj, parkingTvrtkaNaziv, garazaNaziv, tipSlotNaziv, description, start, shortStart, end, shortEnd, cardType, maskedCreditCardNumber, errDescription, transDescription, valutaKratkoIme, invoiceNumber, invoiceEmailAddress, tipStatusaPlacanja, created;
+  final String? transactionID, registracija, reklamacijskiBroj, parkingTvrtkaNaziv, garazaNaziv, tipSlotNaziv, description, shortStart, shortEnd, cardType, maskedCreditCardNumber, errDescription, transDescription, valutaKratkoIme, invoiceNumber, invoiceEmailAddress, tipStatusaPlacanja, created;
   final int? tipStatusaPlatneTransakcijeID, tipSlotID, cardTypeID, secondsLeft, quantity;
   final double? amount, tipSlotPrice;
   final String? tipSlotValuta;
+
+  String? start, end;
 
   TransactionModel(
       this.transactionID,

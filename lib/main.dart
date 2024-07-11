@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:grocery_app/inner_screens/on_sale_screen.dart';
 import 'package:grocery_app/providers/credit_cards_provider.dart';
+import 'package:grocery_app/providers/reservations_provider.dart';
 import 'package:grocery_app/providers/shared_pref_provider.dart';
 import 'package:grocery_app/providers/orders_provider.dart';
 import 'package:grocery_app/providers/products_provider.dart';
@@ -10,6 +11,7 @@ import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:grocery_app/providers/viewed_prod_provider.dart';
 import 'package:grocery_app/screens/auth/account_activation.dart';
 import 'package:grocery_app/screens/credit_cards/credit_cards_screen.dart';
+import 'package:grocery_app/screens/my_reservations/reservations.dart';
 import 'package:grocery_app/screens/vehicles/add_vehicle.dart';
 import 'package:grocery_app/screens/vehicles/vehicles_screen.dart';
 import 'package:grocery_app/screens/viewed_recently/viewed_recently.dart';
@@ -117,6 +119,9 @@ class _MyAppState extends State<MyApp> {
               ChangeNotifierProvider(
                 create: (_) => CreditCardsProvider(),
               ),
+              ChangeNotifierProvider(
+                create: (_) => ReservationsProvider(),
+              ),
             ],
             child: Consumer<SharedPrefsProvider>(
                 builder: (context, themeProvider, child) {
@@ -145,6 +150,8 @@ class _MyAppState extends State<MyApp> {
                         const AddVehicleScreen(), 
                     CreditCardsScreen.routeName: (ctx) =>
                         const CreditCardsScreen(),
+                    ReservationsScreen.routeName: (ctx) =>
+                        const ReservationsScreen(),
                     CategoryScreen.routeName: (ctx) => const CategoryScreen(),
                   });
             }),

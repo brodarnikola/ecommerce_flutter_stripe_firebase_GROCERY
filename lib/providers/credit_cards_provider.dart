@@ -18,13 +18,8 @@ class CreditCardsProvider with ChangeNotifier {
         element.UserDeviceCardID == userDeviceCardID );
     _creditCards.removeAt(removeIndexItem);
     notifyListeners();
-  }
-
-  void addCreditCard(CreditCardsModel data) {
-    _creditCards.add(data);
-    notifyListeners();
   } 
-
+  
   Future<void> fetchCreditCards() async {
    var response = await AuthenticationServices().getCreditCards();
 

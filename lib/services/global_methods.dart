@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:grocery_app/consts/firebase_consts.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../widgets/text_widget.dart';
@@ -10,6 +11,26 @@ import '../widgets/text_widget.dart';
 class GlobalMethods {
   static navigateTo({required BuildContext ctx, required String routeName}) {
     Navigator.pushNamed(ctx, routeName);
+  }
+
+  static String getDateFromDateTimeString(String dateStr) {
+    DateTime date = DateTime.parse(dateStr);
+    DateTime todayDate = DateTime.now();
+    DateTime tomorrowDate = DateTime.now().add(Duration(days: 1));
+
+    String today = DateFormat('d.M.y').format(todayDate);
+    String tomorrow = DateFormat('d.M.y').format(tomorrowDate);
+    String newDate = DateFormat('d.M.y').format(date);
+
+    if (today == newDate) return 'Today';
+    if (tomorrow == newDate) return 'Tomorrow';
+
+    return newDate;
+  }
+
+  static String getTimeFromDateTimeString(String dateStr) {
+    DateTime date = DateTime.parse(dateStr);
+    return DateFormat.jm().format(date); // jm format for Hour:Minute AM/PM
   }
 
   static Future<void> warningDialog({

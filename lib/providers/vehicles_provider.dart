@@ -32,8 +32,8 @@ class VehiclesProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchVehicles() async {
-    var response = await AuthenticationServices().getVehicles();
+  Future<void> fetchVehicles(BuildContext context) async {
+    var response = await AuthenticationServices().getVehicles(context);
 
     log("vehicles  ${response}");
     if (response.success && response.data != null) {

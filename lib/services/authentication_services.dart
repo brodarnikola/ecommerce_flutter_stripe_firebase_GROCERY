@@ -38,7 +38,7 @@ class AuthenticationServices {
           cancelToken: null,
           onReceiveProgress: (p0, p1) => {});
 
-      print("11 vehicles response body is 11  ${res?.data}");
+      print("11 credit cards response body is 11  ${res?.data}");
 
       List<dynamic> jsonData = res?.data;
       List<CreditCardsModel> vehicles = CreditCardsModel.fromJsonList(jsonData);
@@ -48,7 +48,7 @@ class AuthenticationServices {
         print(vehicle.MaskedCreditCardNumber);
       }
 
-      print("22 vehicles response body is 22  ${vehicles}");
+      print("22 credit cards response body is 22  ${vehicles}");
       // var correctData = VehiclesModel.fromJsonList(res?.data);
 
       var apiRes = ApiResponse<List<CreditCardsModel>>(
@@ -77,20 +77,21 @@ class AuthenticationServices {
     }
   }
 
-  Future<ApiResponse<List<VehiclesModel>>> getVehicles() async {
+  Future<ApiResponse<List<VehiclesModel>>> getVehicles(BuildContext context) async {
     try {
       // Map data = {'Mail': username, 'MailMessage': "Password recovery token"};
 
       // String bodyData = json.encode(data);
+
+      final sharedPrefState =
+              Provider.of<SharedPrefsProvider>(context, listen: false); 
 
       var res = await Api().get(
           "/UserDeviceVehicle/GetAllByUserDeviceGUID?guid=5a60acc2-69ad-487b-b73d-91f095f52f8e",
           queryParameters: {},
           options: Options(headers: {
             "Content-Type": "application/json",
-            "Authorization":
-                "Bearer SLNcZV5mTSyZadKZkvxqTMq2BUveLiOWb2iT94Xt7yQwl2yEGi3OzR3dpPIcyT2pQdC2rGmJfkeZfLIDzV7nrgNaVbJucB6KWpZ3-enLx73qH-wRX07HYsGb419RjH3_J3JBK9nyCaWVk6qJyrvkJveOOAnzi7fSc75m9fXcwNjhoHEXM87hKM1pszNSEH8IxuBy0y7lL1cs6exs3dKV_3c6KMZxN8SM9g21uQBO4Q_l5KggCENBsJswszTJRPXA5F62YNUIupVrHg-qj4xgGQYX7FwXqjbPklHxnj2GqqUrO2BRh9nn0CV3o-dYVHbBcPYrrsS7xZFNAM3Lnxvgz4cdlurbU69TMWOA4uegpxFnyUmpau1D5dvaAwtGRhwMkRtOoA8i7_rZLfBcuY1VdL3GN-xuSvv70yPdcIR6kaeS1JN0hRuypTBoGWYrkzU8mXSASjMbk0MOuIRPtFy5HDrCdl-zniIVVvdghX5Nt5I"
-           // "Bearer $token",
+            "Authorization": "Bearer ${sharedPrefState.getBearerToken}"// "Bearer $token",
           }),
           addRequestInterceptor: false,
           cancelToken: null,
@@ -164,9 +165,7 @@ class AuthenticationServices {
           queryParameters: {},
           options: Options(headers: {
             "Content-Type": "application/json",
-            "Authorization":
-                "Bearer SMmbBOkpl6DN7vYTQ-OAd1XBPRcsb2ZV2802-KNQ8Xak90zqmI09Krlv2XtM37atAJO2f9LB0qakV6bbQmDd1LyJG0_TO4NgE-4mt0Kz27iZ0fDfJVDIIb2695xcIldvFRCO9upUcxf0xQw9vS3BlHcZ9NqPZMvTyPIQWBlHiwMaumsahVSlMmOfhOX0OFPirMMWkaD8g8af-FqmT60DxFYpc-R7plibBaEXa_coq7DlbOSiX_9DbMpE-4X42Hg5wIS5r_4d4nUBj9LY9oRLI10SMbxTw1IocLKufiCV-eqj4Na4_KwWVdd0HSkH-r7yVho-ZD51ZuaybURkuo6Jseu-jOlg5QAGIJU7CvfUS42rEBTD-FVukeOkjvEJQWd9jGEn016U2i7bUrUBnrxpxx3Qfm0uRTerDJFHK8vcNXEySahfqBZzpOkte1uuiHWOEJ7jYKLF8UBC2lsmLXwvrZFniRodA-rHVAItGSd70FM"
-            // "Bearer $token",
+            "Authorization": "Bearer ${sharedPrefState.getBearerToken}"// "Bearer $token",
           }),
           addRequestInterceptor: false,
           cancelToken: null,
@@ -210,10 +209,8 @@ class AuthenticationServices {
           data: bodyData,
           queryParameters: {},
           options: Options(headers: {
-            "Content-Type": "application/json",
-            "Authorization":
-                "Bearer SMmbBOkpl6DN7vYTQ-OAd1XBPRcsb2ZV2802-KNQ8Xak90zqmI09Krlv2XtM37atAJO2f9LB0qakV6bbQmDd1LyJG0_TO4NgE-4mt0Kz27iZ0fDfJVDIIb2695xcIldvFRCO9upUcxf0xQw9vS3BlHcZ9NqPZMvTyPIQWBlHiwMaumsahVSlMmOfhOX0OFPirMMWkaD8g8af-FqmT60DxFYpc-R7plibBaEXa_coq7DlbOSiX_9DbMpE-4X42Hg5wIS5r_4d4nUBj9LY9oRLI10SMbxTw1IocLKufiCV-eqj4Na4_KwWVdd0HSkH-r7yVho-ZD51ZuaybURkuo6Jseu-jOlg5QAGIJU7CvfUS42rEBTD-FVukeOkjvEJQWd9jGEn016U2i7bUrUBnrxpxx3Qfm0uRTerDJFHK8vcNXEySahfqBZzpOkte1uuiHWOEJ7jYKLF8UBC2lsmLXwvrZFniRodA-rHVAItGSd70FM"
-            // "Bearer $token",
+            "Content-Type": "application/json", 
+            "Authorization": "Bearer ${sharedPrefState.getBearerToken}"// "Bearer $token",
           }),
           addRequestInterceptor: false,
           cancelToken: null,
@@ -254,8 +251,7 @@ class AuthenticationServices {
           queryParameters: {},
           options: Options(headers: {
             "Content-Type": "application/json",
-            "Authorization":
-                "Bearer ${sharedPrefState.getBearerToken}"
+            "Authorization": "Bearer ${sharedPrefState.getBearerToken}"
             // "Bearer $token",
           }),
           addRequestInterceptor: false,

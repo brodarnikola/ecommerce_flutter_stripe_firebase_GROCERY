@@ -69,7 +69,7 @@ class _FetchScreenState extends State<FetchScreen> {
         sharedPrefState.getIsLoggedInValue == true  ) {
 
         await vehiclesProvider.fetchVehicles(context);
-        await creditCardsProvider.fetchCreditCards();
+        await creditCardsProvider.fetchCreditCards(context);
         await reservationsProvider.fetchReservations(context);
 
         Navigator.of(context).pushReplacement(MaterialPageRoute(

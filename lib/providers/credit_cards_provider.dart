@@ -20,8 +20,8 @@ class CreditCardsProvider with ChangeNotifier {
     notifyListeners();
   } 
   
-  Future<void> fetchCreditCards() async {
-   var response = await AuthenticationServices().getCreditCards();
+  Future<void> fetchCreditCards(BuildContext context) async {
+   var response = await AuthenticationServices().getCreditCards(context);
 
     log("credit cards  ${response}");
     if (response.success && response.data != null) {

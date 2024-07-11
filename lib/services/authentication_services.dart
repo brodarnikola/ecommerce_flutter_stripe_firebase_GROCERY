@@ -85,20 +85,21 @@ Future<ApiResponse<List<ReservationsModel>>> getReservations(BuildContext contex
     }
   }
 
-  Future<ApiResponse<List<CreditCardsModel>>> getCreditCards() async {
+  Future<ApiResponse<List<CreditCardsModel>>> getCreditCards(BuildContext context) async {
     try {
       // Map data = {'Mail': username, 'MailMessage': "Password recovery token"};
 
       // String bodyData = json.encode(data);
+ 
+      final sharedPrefState =
+          Provider.of<SharedPrefsProvider>(context, listen: false);
 
       var res = await Api().get(
-          "/UserDeviceCard/GetAllByUserDeviceID?guid=5a60acc2-69ad-487b-b73d-91f095f52f8e",
+          "/UserDeviceCard/GetAllByUserDeviceID?guid=${sharedPrefState.getGUID}",
           queryParameters: {},
           options: Options(headers: {
             "Content-Type": "application/json",
-            "Authorization":
-                "Bearer SLNcZV5mTSyZadKZkvxqTMq2BUveLiOWb2iT94Xt7yQwl2yEGi3OzR3dpPIcyT2pQdC2rGmJfkeZfLIDzV7nrgNaVbJucB6KWpZ3-enLx73qH-wRX07HYsGb419RjH3_J3JBK9nyCaWVk6qJyrvkJveOOAnzi7fSc75m9fXcwNjhoHEXM87hKM1pszNSEH8IxuBy0y7lL1cs6exs3dKV_3c6KMZxN8SM9g21uQBO4Q_l5KggCENBsJswszTJRPXA5F62YNUIupVrHg-qj4xgGQYX7FwXqjbPklHxnj2GqqUrO2BRh9nn0CV3o-dYVHbBcPYrrsS7xZFNAM3Lnxvgz4cdlurbU69TMWOA4uegpxFnyUmpau1D5dvaAwtGRhwMkRtOoA8i7_rZLfBcuY1VdL3GN-xuSvv70yPdcIR6kaeS1JN0hRuypTBoGWYrkzU8mXSASjMbk0MOuIRPtFy5HDrCdl-zniIVVvdghX5Nt5I"
-            // "Bearer $token",
+            "Authorization": "Bearer ${sharedPrefState.getBearerToken}" // "Bearer $token",
           }),
           addRequestInterceptor: false,
           cancelToken: null,

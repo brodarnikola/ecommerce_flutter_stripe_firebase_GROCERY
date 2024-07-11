@@ -20,11 +20,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthenticationServices {
 
-Future<ApiResponse<List<ReservationsModel>>> getReservations(BuildContext context) async {
-    try {
-      // Map data = {'Mail': username, 'MailMessage': "Password recovery token"};
-
-      // String bodyData = json.encode(data);
+Future<ApiResponse<List<ReservationsModel>>> getPayments(BuildContext context) async {
+    try { 
 
       final sharedPrefState =
           Provider.of<SharedPrefsProvider>(context, listen: false);
@@ -44,20 +41,17 @@ Future<ApiResponse<List<ReservationsModel>>> getReservations(BuildContext contex
       print("11 reservations response body is 11  ${res?.data}");
 
       List<dynamic> jsonData = res?.data;
-      List<ReservationsModel> vehicles = ReservationsModel.fromJsonList(jsonData);
+      List<ReservationsModel> reservations = ReservationsModel.fromJsonList(jsonData);
       // Now you have a list of Reservatiosn objects
       // You can print or use them as you wish
-      for (var vehicle in vehicles) {
+      for (var vehicle in reservations) {
         print(vehicle.RotoGarazaNaziv);
-      }
-
-      print("22 reservations response body is 22  ${vehicles}");
-      // var correctData = VehiclesModel.fromJsonList(res?.data);
+      } 
 
       var apiRes = ApiResponse<List<ReservationsModel>>(
         success: true,
         message: "Success",
-        data: vehicles,
+        data: reservations,
       );
  
       apiRes.data.forEach((element) {
@@ -85,12 +79,73 @@ Future<ApiResponse<List<ReservationsModel>>> getReservations(BuildContext contex
     }
   }
 
-  Future<ApiResponse<List<CreditCardsModel>>> getCreditCards(BuildContext context) async {
+  Future<ApiResponse<List<ReservationsModel>>> getReservations(
+      BuildContext context) async {
+    try {
+      final sharedPrefState =
+          Provider.of<SharedPrefsProvider>(context, listen: false);
+
+      var res = await Api()
+          .get("/getreservations?guid=${sharedPrefState.getGUID}&samoAktivne=1",
+              queryParameters: {},
+              options: Options(headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${sharedPrefState.getBearerToken}"
+                // "Bearer $token",
+              }),
+              addRequestInterceptor: false,
+              cancelToken: null,
+              onReceiveProgress: (p0, p1) => {});
+
+      print("11 reservations response body is 11  ${res?.data}");
+
+      List<dynamic> jsonData = res?.data;
+      List<ReservationsModel> reservations =
+          ReservationsModel.fromJsonList(jsonData);
+      // Now you have a list of Reservatiosn objects
+      // You can print or use them as you wish
+      for (var vehicle in reservations) {
+        print(vehicle.RotoGarazaNaziv);
+      }
+
+      var apiRes = ApiResponse<List<ReservationsModel>>(
+        success: true,
+        message: "Success",
+        data: reservations,
+      );
+
+      apiRes.data.forEach((element) {
+        print("vehicles body ${element}");
+      });
+
+      // [
+//     {
+//         "RezervacijaID": 75,
+//         "RotoGarazaID": 18,
+//         "TipSlotID": 1,
+//         "TipSlotNaziv": "Rezervacija - bez punjača",
+//         "RotoGarazaNaziv": "Garaža Zagreb",
+//         "Registracija": "ck201gl",
+//         "Pocetak": "2024-07-11T09:00:00",
+//         "Kraj": "2024-07-11T10:00:00",
+//         "PlaceniIznos": 93
+//     }
+// ]
+
+      return apiRes;
+    } catch (err) {
+      print("Catched reservation exception is $err");
+      throw Exception(err.toString());
+    }
+  }
+
+  Future<ApiResponse<List<CreditCardsModel>>> getCreditCards(
+      BuildContext context) async {
     try {
       // Map data = {'Mail': username, 'MailMessage': "Password recovery token"};
 
       // String bodyData = json.encode(data);
- 
+
       final sharedPrefState =
           Provider.of<SharedPrefsProvider>(context, listen: false);
 
@@ -99,7 +154,8 @@ Future<ApiResponse<List<ReservationsModel>>> getReservations(BuildContext contex
           queryParameters: {},
           options: Options(headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer ${sharedPrefState.getBearerToken}" // "Bearer $token",
+            "Authorization":
+                "Bearer ${sharedPrefState.getBearerToken}" // "Bearer $token",
           }),
           addRequestInterceptor: false,
           cancelToken: null,

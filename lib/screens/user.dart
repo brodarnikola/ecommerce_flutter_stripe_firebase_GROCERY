@@ -14,6 +14,7 @@ import 'package:grocery_app/screens/credit_cards/credit_cards_screen.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 import 'package:grocery_app/screens/my_reservations/reservations.dart';
 import 'package:grocery_app/screens/orders/orders_screen.dart';
+import 'package:grocery_app/screens/payments/payments.dart';
 import 'package:grocery_app/screens/vehicles/vehicles_screen.dart';
 import 'package:grocery_app/screens/viewed_recently/viewed_recently.dart';
 import 'package:grocery_app/screens/wishlist/wishlist_screen.dart';
@@ -237,6 +238,18 @@ class _UserScreenState extends State<UserScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const ReservationsScreen(),
+                      ),
+                    ); 
+                  },
+                  color: color,
+                ),
+                _listTiles(
+                  title: 'Payments',
+                  icon: IconlyLight.unlock,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const PaymentsScreen(),
                       ),
                     ); 
                   },

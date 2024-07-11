@@ -14,7 +14,7 @@ import 'package:grocery_app/screens/credit_cards/credit_cards_screen.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 import 'package:grocery_app/screens/my_reservations/reservations.dart';
 import 'package:grocery_app/screens/orders/orders_screen.dart';
-import 'package:grocery_app/screens/transactions/transacations.dart';
+import 'package:grocery_app/screens/transactions/transactions.dart';
 import 'package:grocery_app/screens/vehicles/vehicles_screen.dart';
 import 'package:grocery_app/screens/viewed_recently/viewed_recently.dart';
 import 'package:grocery_app/screens/wishlist/wishlist_screen.dart';

@@ -9,6 +9,11 @@ import 'package:uuid/uuid.dart';
 import '../widgets/text_widget.dart';
 
 class GlobalMethods {
+
+  static navigateToForgetPreviousRoute({required BuildContext ctx, required String routeName}) {
+    Navigator.pushReplacementNamed(ctx, routeName); 
+  }
+
   static navigateTo({required BuildContext ctx, required String routeName}) {
     Navigator.pushNamed(ctx, routeName);
   }

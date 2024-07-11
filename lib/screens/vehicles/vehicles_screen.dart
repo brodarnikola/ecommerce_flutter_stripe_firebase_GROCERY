@@ -93,7 +93,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                         horizontal: 40, vertical: 20),
                   ),
                   onPressed: () { 
-                    GlobalMethods.navigateTo(
+                    GlobalMethods.navigateToForgetPreviousRoute(
                         ctx: context, routeName: AddVehicleScreen.routeName);
                   },
                   child: TextWidget(

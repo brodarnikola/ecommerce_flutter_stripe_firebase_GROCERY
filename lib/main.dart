@@ -13,7 +13,7 @@ import 'package:grocery_app/providers/viewed_prod_provider.dart';
 import 'package:grocery_app/screens/auth/account_activation.dart';
 import 'package:grocery_app/screens/credit_cards/credit_cards_screen.dart';
 import 'package:grocery_app/screens/my_reservations/reservations.dart';
-import 'package:grocery_app/screens/transactions/transacations.dart';
+import 'package:grocery_app/screens/transactions/transactions.dart';
 import 'package:grocery_app/screens/user.dart';
 import 'package:grocery_app/screens/vehicles/add_vehicle.dart';
 import 'package:grocery_app/screens/vehicles/vehicles_screen.dart';

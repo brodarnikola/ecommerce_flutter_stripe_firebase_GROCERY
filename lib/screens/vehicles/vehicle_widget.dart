@@ -54,7 +54,7 @@ class _VehicleWidgetState extends State<VehicleWidget> {
     Size size = Utils(context).getScreenSize;
     return ListTile(
         onTap: () {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => AddVehicleScreen(
@@ -63,7 +63,7 @@ class _VehicleWidgetState extends State<VehicleWidget> {
                 userDeviceVehicleIDParam: vehicleModel.UserDeviceVehicleID,
               ),
             ),
-          );
+          ); 
         },
         title: TextWidget(
             text: '${vehicleModel.Name}', color: color, textSize: 18),

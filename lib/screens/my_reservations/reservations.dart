@@ -65,14 +65,27 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                 isLoading: _isLoading,
                 child: Stack(children: [
                   ListView.separated(
+                    padding: const EdgeInsets.all(5),
                     itemCount: vehiclesList.length,
                     itemBuilder: (ctx, index) {
-                      return Padding(
+                      return 
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue[50],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: Colors.grey[300] ?? Colors.grey),
+                        ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 2, vertical: 6),
+                            horizontal: 20, vertical: 15),
+                        //  padding: const EdgeInsets.all(20.0),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       horizontal: 2, vertical: 6),
                         child: ChangeNotifierProvider.value(
                           value: vehiclesList[index],
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextWidget(
                                   text:

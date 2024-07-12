@@ -109,7 +109,7 @@ class AuthenticationServices {
       );
 
       apiRes.data.forEach((element) {
-        print("vehicles body ${element}");
+        print("reservations body ${element}");
       });
 
       return apiRes;
@@ -162,7 +162,7 @@ class AuthenticationServices {
 
       // print("vehicles body ${apiRes.data}");
       apiRes.data.forEach((element) {
-        print("vehicles body ${element}");
+        print("credit card body ${element}");
       });
       // var apiRes = ApiResponse<VehiclesModel>(
       //   success: true,

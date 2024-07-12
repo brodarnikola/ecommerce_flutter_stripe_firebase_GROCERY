@@ -65,7 +65,7 @@ class _VehicleWidgetState extends State<VehicleWidget> {
         //       horizontal: 2, vertical: 6),
         child: ListTile(
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => AddVehicleScreen(

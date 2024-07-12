@@ -17,9 +17,9 @@ class ReservationsProvider with ChangeNotifier {
   Future<void> fetchReservations(BuildContext context) async {
    var response = await AuthenticationServices().getReservations(context);
 
-    log("credit cards  ${response}");
+    log("33 reservations ${response}");
     if (response.success && response.data != null) {
-      log("credit cards body ${response.data}");
+      log("44 reservations body ${response.data}");
       _reservations.addAll(response.data);
     }
     notifyListeners();

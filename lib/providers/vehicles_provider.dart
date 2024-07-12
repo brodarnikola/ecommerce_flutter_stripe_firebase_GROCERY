@@ -35,9 +35,9 @@ class VehiclesProvider with ChangeNotifier {
   Future<void> fetchVehicles(BuildContext context) async {
     var response = await AuthenticationServices().getVehicles(context);
 
-    log("vehicles  ${response}");
+    log("33 vehicles  ${response}");
     if (response.success && response.data != null) {
-      log("vehicles body ${response.data}");
+      log("44 vehicles body ${response.data}");
       _vehicles.addAll(response.data);
     }
     notifyListeners();

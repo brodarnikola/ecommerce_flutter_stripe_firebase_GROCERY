@@ -145,10 +145,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             textColor: Colors.white,
             fontSize: 16.0,
           );
-          Navigator.pushReplacementNamed(context, VehiclesScreen.routeName);
-          // Navigator.of(context).pushReplacement(MaterialPageRoute(
-          //   builder: (context) => const VehiclesScreen(),
-          // ));
+          Navigator.pop(context);
         } else {
           // If the server did not return a 200 OK response,
           // then throw an exception.

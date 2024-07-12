@@ -16,9 +16,9 @@ class TransactionsProvider with ChangeNotifier {
   Future<void> fetchTransactions(BuildContext context) async {
    var response = await AuthenticationServices().getTransactions(context);
 
-    log("transactions  ${response}");
+    log("33 transactions  ${response}");
     if (response.success && response.data != null) {
-      log("transactions body ${response.data}");
+      log("44 transactions body ${response.data}");
       _transactions.addAll(response.data);
     }
     notifyListeners();

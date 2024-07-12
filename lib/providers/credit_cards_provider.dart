@@ -23,9 +23,9 @@ class CreditCardsProvider with ChangeNotifier {
   Future<void> fetchCreditCards(BuildContext context) async {
    var response = await AuthenticationServices().getCreditCards(context);
 
-    log("credit cards  ${response}");
+    log("33 credit cards  ${response}");
     if (response.success && response.data != null) {
-      log("credit cards body ${response.data}");
+      log("44 credit cards body ${response.data}");
       _creditCards.addAll(response.data);
     }
     notifyListeners();

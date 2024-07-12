@@ -9,42 +9,10 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:grocery_app/screens/google_maps/google_maps_example.dart';
 import 'package:grocery_app/screens/google_maps/map_ui.dart';
-
-// import 'animate_camera.dart';
-// import 'lite_mode.dart';
-// import 'map_click.dart';
-// import 'map_coordinates.dart';
-// import 'map_map_id.dart';
-// import 'map_ui.dart';
-// import 'marker_icons.dart';
-// import 'move_camera.dart';
-// import 'padding.dart';
-// import 'page.dart';
-// import 'place_circle.dart';
-// import 'place_marker.dart';
-// import 'place_polygon.dart';
-// import 'place_polyline.dart';
-// import 'scrolling_map.dart';
-// import 'snapshot.dart';
-// import 'tile_overlay.dart';
-
-final List<GoogleMapExampleAppPage> _allPages = <GoogleMapExampleAppPage>[
-  const MapUiPage(),
-  // const MapCoordinatesPage(),
-  // const MapClickPage(),
-  // const AnimateCameraPage(),
-  // const MoveCameraPage(),
-  // const PlaceMarkerPage(),
-  // const MarkerIconsPage(),
-  // const ScrollingMapPage(),
-  // const PlacePolylinePage(),
-  // const PlacePolygonPage(),
-  // const PlaceCirclePage(),
-  // const PaddingPage(),
-  // const SnapshotPage(),
-  // const LiteModePage(),
-  // const TileOverlayPage(), 
-];
+import 'package:grocery_app/screens/vehicles/add_vehicle.dart';
+import 'package:grocery_app/services/global_methods.dart';
+import 'package:grocery_app/services/utils.dart';
+import 'package:grocery_app/widgets/text_widget.dart'; 
 
 /// MapsDemo is the Main Application.
 class MapsDemo extends StatelessWidget {
@@ -61,17 +29,67 @@ class MapsDemo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color color = Utils(context).color;
+    final themeState = Utils(context).getTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('GoogleMaps examples')),
-      body: ListView.builder(
-        itemCount: _allPages.length,
-        itemBuilder: (_, int index) => ListTile(
-          leading: _allPages[index].leading,
-          title: Text(_allPages[index].title),
-          onTap: () => _pushPage(context, _allPages[index]),
-        ),
-      ),
-    );
+        appBar: AppBar(title: const Text('GoogleMaps examples')),
+        body: Column(
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: BorderSide(
+                    color: color,
+                  ),
+                ),
+                // onPrimary: color,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (_) => Scaffold(
+                          appBar: AppBar(title: Text("Google Maps title")),
+                          body: const MapUiPage(),
+                        )));
+                // GlobalMethods.navigateTo(
+                //     ctx: context, routeName: AddVehicleScreen.routeName);
+              },
+              child: TextWidget(
+                text: "Add vehicle",
+                textSize: 20,
+                color: themeState ? Colors.grey.shade300 : Colors.grey.shade800,
+                isTitle: true,
+              ),
+            ),
+            Text(
+              'Google maps examples',
+              style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.black,
+                  decoration: TextDecoration.lineThrough),
+            ),
+            Text(
+              'Second Google maps examples',
+              style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.black,
+                  decoration: TextDecoration.lineThrough),
+            )
+          ],
+        )
+        // ListView.builder(
+        //   itemCount: _allPages.length,
+        //   itemBuilder: (_, int index) => ListTile(
+        //     leading: _allPages[index].leading,
+        //     title: Text(_allPages[index].title),
+        //     onTap: () => _pushPage(context, _allPages[index]),
+        //   ),
+        // ),
+        );
   }
 }
 

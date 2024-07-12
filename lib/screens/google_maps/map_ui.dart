@@ -7,36 +7,30 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:grocery_app/screens/google_maps/google_maps_example.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart'; 
 import 'package:grocery_app/services/global_methods.dart';
 
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:developer' as developer;
 
 final LatLngBounds sydneyBounds = LatLngBounds(
   southwest: const LatLng(-34.022631, 150.620685),
   northeast: const LatLng(-33.571835, 151.325952),
 );
 
-class MapUiPage extends GoogleMapExampleAppPage {
-  const MapUiPage({Key? key})
-      : super(const Icon(Icons.map), 'User interface', key: key);
+class MapUiPage extends StatefulWidget {  
+ 
+  const MapUiPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return const MapUiBody();
-  }
-}
+  State<MapUiPage> createState() => _MapUiPageState();
 
-class MapUiBody extends StatefulWidget {
-  const MapUiBody({super.key});
+} 
 
-  @override
-  State<StatefulWidget> createState() => MapUiBodyState();
-}
+class _MapUiPageState extends State<MapUiPage> with WidgetsBindingObserver {
+  // MapUiBodyState();
 
-class MapUiBodyState extends State<MapUiBody> {
-  MapUiBodyState();
+  bool _isRequestingPermission = false;
 
   static const CameraPosition _kInitialPosition = CameraPosition(
     target: LatLng(-33.852, 151.211),
@@ -65,59 +59,123 @@ class MapUiBodyState extends State<MapUiBody> {
   String _mapStyle = '';
 
   @override
-  void initState() {
-    super.initState();
-
-    requestLocationPermission();
+  didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    developer.log("DID CHANGE APP location status: ");
+    if (state == AppLifecycleState.resumed && !_isRequestingPermission) {
+      checkLocationPermission();
+    }
   }
 
-  Future<void> requestLocationPermission() async {
-//     var status = await Permission.location.status;
-//     if (status.isDenied) {
-//       // We haven't asked for permission yet or the permission has been denied before, but not permanently.
-//     }
-
-// // You can also directly ask permission about its status.
-//     if (await Permission.location.isRestricted) {
-//       // The OS restricts access, for example, because of parental controls.
-//     }
-    PermissionStatus status = await Permission.location.status;
-
-    if (!status.isGranted) {
-      PermissionStatus result = await Permission.location.request();
-      if (!result.isGranted) {
-        GlobalMethods.warningDialog(
-            title: "Enable location permission",
-            subtitle: "Please enable location permissions", 
-            fct: () async {
-              Navigator.pop(context);
-            },
-            context: context);
-        // The user did not grant the permission
-        return;
-      } else {
-        // The user granted the permission
-        // Please show me code, how to enable now my location button on google maps
-        setState(() {
-          _myLocationButtonEnabled = true;
-          _myLocationEnabled = true;
-        });
-      }
-    }
-    else {
+  void checkLocationPermission() async {
+    var status = await Permission.location.status;
+    if (status.isGranted) {
       setState(() {
         _myLocationButtonEnabled = true;
         _myLocationEnabled = true;
       });
+    } else { 
+      _isRequestingPermission = true;
+      requestLocationPermission();
+      // Handle the case where the permission is not granted
     }
-
-    // The permission is granted, you can use the location services now
+  }
+ 
+  @override
+  void initState() {
+    super.initState();
+    developer.log("INIT location status: ");
+    WidgetsBinding.instance.addObserver(this);
+    checkLocationPermission();
   }
 
   @override
   void dispose() {
+    developer.log("DISPOSE location status: ");
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+
+  Future<void> requestLocationPermission() async {
+    PermissionStatus status = await Permission.location.status;
+
+    print("location status: $status");
+
+    developer.log("location status: $status");
+
+    await Permission.location.onDeniedCallback(() {
+      GlobalMethods.warningDialog(
+          title: "Enable location permission",
+          subtitle: "Please enable location permissions",
+          fct: () async {
+            Navigator.pop(context);
+          },
+          context: context);
+      // The user did not grant the permission
+      return;
+      // Your code
+    }).onGrantedCallback(() {
+      setState(() {
+        _myLocationButtonEnabled = true;
+        _myLocationEnabled = true;
+      });
+      _isRequestingPermission = false;
+    }).onPermanentlyDeniedCallback(() {
+      GlobalMethods.warningDialog(
+          title: "Enable location permission",
+          subtitle:
+              "You have permantely disabled location permission. Please enable location permissions to use this feature.",
+          fct: () async {
+            _isRequestingPermission = false;
+            openAppSettings();
+          },
+          context: context);
+      // The user did not grant the permission
+      return;
+      // Your code
+    }).onRestrictedCallback(() {
+      // The OS restricts access, for example because of parental controls.
+      // Your code
+    }).onLimitedCallback(() {
+      // Your code
+    }).onProvisionalCallback(() {
+      // Your code
+    }).request();
+
+    // PermissionStatus status = await Permission.location.status;
+
+    // print("location status: $status");
+
+    // if (!status.isGranted) {
+    //   PermissionStatus result = await Permission.location.request();
+    //   if (!result.isGranted) {
+    //     GlobalMethods.warningDialog(
+    //         title: "Enable location permission",
+    //         subtitle: "Please enable location permissions",
+    //         fct: () async {
+    //           Navigator.pop(context);
+    //         },
+    //         context: context);
+    //     // The user did not grant the permission
+    //     return;
+    //   } else {
+    //     // The user granted the permission
+    //     // Please show me code, how to enable now my location button on google maps
+    //     setState(() {
+    //       _myLocationButtonEnabled = true;
+    //       _myLocationEnabled = true;
+    //     });
+    //   }
+    // }
+    // else {
+    //   setState(() {
+    //     _myLocationButtonEnabled = true;
+    //     _myLocationEnabled = true;
+    //   });
+    // }
+
+    // The permission is granted, you can use the location services now
+  } 
 
   Widget _compassToggler() {
     return TextButton(

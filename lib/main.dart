@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -12,6 +14,7 @@ import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:grocery_app/providers/viewed_prod_provider.dart';
 import 'package:grocery_app/screens/auth/account_activation.dart';
 import 'package:grocery_app/screens/credit_cards/credit_cards_screen.dart';
+import 'package:grocery_app/screens/google_maps/google_maps.dart';
 import 'package:grocery_app/screens/my_reservations/reservations.dart';
 import 'package:grocery_app/screens/transactions/transactions.dart';
 import 'package:grocery_app/screens/user.dart';
@@ -35,6 +38,10 @@ import 'screens/auth/register.dart';
 import 'screens/orders/orders_screen.dart';
 import 'screens/wishlist/wishlist_screen.dart';
 
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey = PUBLIC_KEY;
@@ -53,24 +60,59 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   SharedPrefsProvider sharedPrefProvider = SharedPrefsProvider();
 
+  Completer<AndroidMapRenderer?>? _initializedRendererCompleter;
+ 
+  @override
+  void initState() {
+    getCurrentAppTheme();
+
+    final GoogleMapsFlutterPlatform mapsImplementation =
+        GoogleMapsFlutterPlatform.instance;
+    if (mapsImplementation is GoogleMapsFlutterAndroid) {
+      mapsImplementation.useAndroidViewSurface = true;
+      initializeMapRenderer();
+    }
+
+    super.initState();
+  }
+ 
   void getCurrentAppTheme() async {
     sharedPrefProvider.setDarkTheme =
         await sharedPrefProvider.darkThemePrefs.getTheme();
 
-    if( await sharedPrefProvider.isLoggedInUser() ) {
-       // call here only once when the app starts and setup usernmae and email
+    if (await sharedPrefProvider.isLoggedInUser()) {
+      // call here only once when the app starts and setup usernmae and email
       sharedPrefProvider.getUsernameValue();
       sharedPrefProvider.getEmailValue();
       sharedPrefProvider.getPasswordValue();
       sharedPrefProvider.getGUIDValue();
       sharedPrefProvider.getBearerTokenValue();
-    }    
+    }
   }
 
-  @override
-  void initState() {
-    getCurrentAppTheme();
-    super.initState();
+  Future<AndroidMapRenderer?> initializeMapRenderer() async {
+    if (_initializedRendererCompleter != null) {
+      return _initializedRendererCompleter!.future;
+    }
+
+    final Completer<AndroidMapRenderer?> completer =
+        Completer<AndroidMapRenderer?>();
+    _initializedRendererCompleter = completer;
+
+    WidgetsFlutterBinding.ensureInitialized();
+
+    final GoogleMapsFlutterPlatform mapsImplementation =
+        GoogleMapsFlutterPlatform.instance;
+    if (mapsImplementation is GoogleMapsFlutterAndroid) {
+      unawaited(mapsImplementation
+          .initializeWithRenderer(AndroidMapRenderer.latest)
+          .then((AndroidMapRenderer initializedRenderer) =>
+              completer.complete(initializedRenderer)));
+    } else {
+      completer.complete(null);
+    }
+
+    return completer.future;
   }
 
   final Future<FirebaseApp> _firebaseInitialization = Firebase.initializeApp();
@@ -78,7 +120,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: _firebaseInitialization,
-        builder: (context, snapshot) {  
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -147,13 +189,14 @@ class _MyAppState extends State<MyApp> {
                     RegisterScreen.routeName: (ctx) => const RegisterScreen(),
                     LoginScreen.routeName: (ctx) => const LoginScreen(),
                     ForgetPasswordScreen.routeName: (ctx) =>
-                        const ForgetPasswordScreen(), 
+                        const ForgetPasswordScreen(),
                     AccountActivationScreen.routeName: (ctx) =>
                         const AccountActivationScreen(),
-                    VehiclesScreen.routeName: (ctx) =>
-                        const VehiclesScreen(),
+                    MapsDemo.routeName: (ctx) =>
+                        MapsDemo(),
+                    VehiclesScreen.routeName: (ctx) => const VehiclesScreen(),
                     AddVehicleScreen.routeName: (ctx) =>
-                        const AddVehicleScreen(), 
+                        const AddVehicleScreen(),
                     CreditCardsScreen.routeName: (ctx) =>
                         const CreditCardsScreen(),
                     ReservationsScreen.routeName: (ctx) =>

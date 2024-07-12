@@ -11,6 +11,7 @@ import 'package:grocery_app/consts/firebase_consts.dart';
 import 'package:grocery_app/models/album_model.dart';
 import 'package:grocery_app/screens/auth/forget_pass.dart';
 import 'package:grocery_app/screens/credit_cards/credit_cards_screen.dart';
+import 'package:grocery_app/screens/google_maps/google_maps.dart';
 import 'package:grocery_app/screens/loading_manager.dart';
 import 'package:grocery_app/screens/my_reservations/reservations.dart';
 import 'package:grocery_app/screens/orders/orders_screen.dart';
@@ -202,6 +203,18 @@ class _UserScreenState extends State<UserScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const ForgetPasswordScreen(),
+                      ),
+                    );
+                  },
+                  color: color,
+                ),
+                _listTiles(
+                  title: 'Google maps',
+                  icon: IconlyLight.unlock,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => MapsDemo(),
                       ),
                     );
                   },

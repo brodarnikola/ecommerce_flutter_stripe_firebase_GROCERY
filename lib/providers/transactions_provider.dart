@@ -8,12 +8,20 @@ import 'package:grocery_app/models/transactions_model.dart';
 import 'package:grocery_app/services/authentication_services.dart'; 
 
 class TransactionsProvider with ChangeNotifier {
-  static List<TransactionModel> _transactions = [];
+  List<TransactionModel> _transactions = [];  
+  bool _isLoading = true;
+  
   List<TransactionModel> get getTransactions {
     return _transactions;
   }  
+
+  bool get isLoading {
+    return _isLoading;
+  }
   
   Future<void> fetchTransactions(BuildContext context) async {
+    _isLoading = true;
+    notifyListeners();
    var response = await AuthenticationServices().getTransactions(context);
 
     log("33 transactions  ${response}");
@@ -21,6 +29,7 @@ class TransactionsProvider with ChangeNotifier {
       log("44 transactions body ${response.data}");
       _transactions.addAll(response.data);
     }
+    _isLoading = false;
     notifyListeners();
   }
 }

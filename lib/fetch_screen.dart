@@ -34,7 +34,6 @@ class _FetchScreenState extends State<FetchScreen> {
   void initState() {
     images.shuffle();
     Future.delayed(const Duration(microseconds: 5), () async {
-
       final sharedPrefState =
           Provider.of<SharedPrefsProvider>(context, listen: false);
 
@@ -65,16 +64,16 @@ class _FetchScreenState extends State<FetchScreen> {
         await wishlistProvider.fetchWishlist();
         await orderProvider.fetchOrders();
       }
- 
+
       print("Is logged in user AWESOME: ${sharedPrefState.isLoggedInUser()}");
 
-      if(  
-        sharedPrefState.getIsLoggedInValue == true  ) {
-
-        vehiclesProvider.fetchVehicles(context);
-        creditCardsProvider.fetchCreditCards(context);
-        reservationsProvider.fetchReservations(context); 
-        await transactionsProvider.fetchTransactions(context);
+      if (sharedPrefState.getIsLoggedInValue == true) {
+        await Future.wait([
+          vehiclesProvider.fetchVehicles(context),
+          creditCardsProvider.fetchCreditCards(context),
+          reservationsProvider.fetchReservations(context),
+          // transactionsProvider.fetchTransactions(context)
+        ]);
 
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (ctx) => const BottomBarScreen(),
@@ -83,7 +82,7 @@ class _FetchScreenState extends State<FetchScreen> {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (ctx) => const LoginScreen(),
         ));
-      } 
+      }
 
       //   SharedPreferences prefs = await SharedPreferences.getInstance();
       // bool? isLoggedIn = prefs.getBool(isLoggedIn as String);
@@ -105,7 +104,7 @@ class _FetchScreenState extends State<FetchScreen> {
       // ));
     });
     super.initState();
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {

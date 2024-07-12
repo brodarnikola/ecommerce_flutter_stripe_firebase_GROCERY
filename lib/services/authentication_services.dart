@@ -26,6 +26,9 @@ class AuthenticationServices {
     try {
       final sharedPrefState =
           Provider.of<SharedPrefsProvider>(context, listen: false);
+      
+      await Future.delayed(Duration(seconds: 2));
+
 
       var res = await Api()
           .get("/gettransactions?guid=${sharedPrefState.getGUID}&samoAktivne=1",

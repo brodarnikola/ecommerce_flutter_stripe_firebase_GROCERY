@@ -65,6 +65,7 @@ class UserNetworkService {
       developer.log(bodyData);
 
        var res = await Api().post("/registeruser", 
+          data: bodyData,
           queryParameters: {},
           options: null,
           addRequestInterceptor: false,

@@ -233,7 +233,7 @@ class AuthenticationServices {
           Provider.of<SharedPrefsProvider>(context, listen: false);
 
       var res = await Api().get(
-          "/UserDeviceVehicle/GetAllByUserDeviceGUID?guid=5a60acc2-69ad-487b-b73d-91f095f52f8e",
+          "/UserDeviceVehicle/GetAllByUserDeviceGUID?guid=${sharedPrefState.getGUID}",
           queryParameters: {},
           options: Options(headers: {
             "Content-Type": "application/json",
@@ -345,7 +345,7 @@ class AuthenticationServices {
 
       Map data = {
         'Ticket': ticket,
-        'GUID': sharedPrefState.getEmail,
+        'GUID': sharedPrefState.getGUID,
         'UserDeviceVehicleID': userDeviceVehicleID,
         'LangID': 1,
       };

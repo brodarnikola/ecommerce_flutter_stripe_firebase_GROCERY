@@ -111,7 +111,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                               ),
                               TextWidget(
                                   text:
-                                      '${GlobalMethods.getDateFromDateTimeString(vehiclesList[index].Pocetak ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(vehiclesList[index].Pocetak ?? "")}',
+                                      'From ${GlobalMethods.getDateFromDateTimeString(vehiclesList[index].Pocetak ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(vehiclesList[index].Pocetak ?? "")}',
                                   color: color,
                                   textSize: 18),
                               const SizedBox(
@@ -119,7 +119,7 @@ class _ReservationsScreenState extends State<ReservationsScreen> {
                               ),
                               TextWidget(
                                   text:
-                                      '${GlobalMethods.getDateFromDateTimeString(vehiclesList[index].Kraj ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(vehiclesList[index].Kraj ?? "")}',
+                                      'Until ${GlobalMethods.getDateFromDateTimeString(vehiclesList[index].Kraj ?? "")} - ${GlobalMethods.getTimeFromDateTimeString(vehiclesList[index].Kraj ?? "")}',
                                   color: color,
                                   textSize: 18),
                               const SizedBox(

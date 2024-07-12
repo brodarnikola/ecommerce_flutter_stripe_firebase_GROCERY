@@ -60,6 +60,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
               children: [
                 Expanded(
                     child: ListView.separated(
+                  padding: const EdgeInsets.all(5),
                   itemCount: vehiclesList.length,
                   itemBuilder: (ctx, index) {
                     return Padding(
@@ -67,16 +68,20 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                           horizontal: 2, vertical: 6),
                       child: ChangeNotifierProvider.value(
                         value: vehiclesList[index],
-                        child: VehicleWidget( index: index), // Pass the index as a named argument
+                        child: VehicleWidget(
+                            index: index), // Pass the index as a named argument
                       ),
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) {
-                    return Divider(
-                      color: color,
-                      thickness: 1,
-                    );
+                    return SizedBox(height: 0);
                   },
+                  // separatorBuilder: (BuildContext context, int index) {
+                  //   return Divider(
+                  //     color: color,
+                  //     thickness: 1,
+                  //   );
+                  // },
                 )),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -92,7 +97,7 @@ class _VehiclesScreenState extends State<VehiclesScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 20),
                   ),
-                  onPressed: () { 
+                  onPressed: () {
                     GlobalMethods.navigateToForgetPreviousRoute(
                         ctx: context, routeName: AddVehicleScreen.routeName);
                   },

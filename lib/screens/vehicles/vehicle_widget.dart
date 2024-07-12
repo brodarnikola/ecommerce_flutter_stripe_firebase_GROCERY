@@ -52,43 +52,54 @@ class _VehicleWidgetState extends State<VehicleWidget> {
 
     final Color color = Utils(context).color;
     Size size = Utils(context).getScreenSize;
-    return ListTile(
-        onTap: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddVehicleScreen(
-                vehicleNameParam: vehicleModel.Name,
-                vehiclePlateNumberParam: vehicleModel.Ticket,
-                userDeviceVehicleIDParam: vehicleModel.UserDeviceVehicleID,
+    return Container(
+        decoration: BoxDecoration(
+          color: Colors.blue[50],
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.grey[300] ?? Colors.grey),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        //  padding: const EdgeInsets.all(20.0),
+        // Padding(
+        //   padding: const EdgeInsets.symmetric(
+        //       horizontal: 2, vertical: 6),
+        child: ListTile(
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddVehicleScreen(
+                    vehicleNameParam: vehicleModel.Name,
+                    vehiclePlateNumberParam: vehicleModel.Ticket,
+                    userDeviceVehicleIDParam: vehicleModel.UserDeviceVehicleID,
+                  ),
+                ),
+              );
+            },
+            title: TextWidget(
+                text: '${vehicleModel.Name}', color: color, textSize: 18),
+            subtitle: Text(vehicleModel.Ticket),
+            trailing: IconButton(
+              onPressed: () {
+                GlobalMethods.warningDialog(
+                    title: 'Delete this vehicle?',
+                    subtitle: 'Are you sure?',
+                    fct: () async {
+                      var vehicleList = await AuthenticationServices()
+                          .deleteVehicle(vehicleModel.Ticket,
+                              vehicleModel.UserDeviceVehicleID, context);
+                      if (vehicleList.success) {
+                        vehiclesProvider.deleteVehicle(index);
+                      }
+                    },
+                    context: context);
+              },
+              icon: Icon(
+                IconlyBroken.delete,
+                color: color,
               ),
-            ),
-          ); 
-        },
-        title: TextWidget(
-            text: '${vehicleModel.Name}', color: color, textSize: 18),
-        subtitle: Text(vehicleModel.Ticket),
-        trailing: IconButton(
-          onPressed: () {
-            GlobalMethods.warningDialog(
-                title: 'Delete this vehicle?',
-                subtitle: 'Are you sure?',
-                fct: () async {
-                  var vehicleList = await AuthenticationServices()
-                      .deleteVehicle(vehicleModel.Ticket,
-                          vehicleModel.UserDeviceVehicleID, context);
-                  if (vehicleList.success) {
-                    vehiclesProvider.deleteVehicle(index);
-                  }
-                },
-                context: context);
-          },
-          icon: Icon(
-            IconlyBroken.delete,
-            color: color,
-          ),
-        )
-        // trailing: TextWidget(text: orderDateToShow, color: color, textSize: 18),
-        );
+            )
+            // trailing: TextWidget(text: orderDateToShow, color: color, textSize: 18),
+            ));
   }
 }

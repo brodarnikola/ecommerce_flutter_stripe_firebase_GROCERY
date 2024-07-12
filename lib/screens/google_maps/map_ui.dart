@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:grocery_app/screens/google_maps/google_maps_example.dart';
- 
+import 'package:grocery_app/services/global_methods.dart';
+
+import 'package:permission_handler/permission_handler.dart';
 
 final LatLngBounds sydneyBounds = LatLngBounds(
   southwest: const LatLng(-34.022631, 150.620685),
@@ -55,9 +57,9 @@ class MapUiBodyState extends State<MapUiBody> {
   bool _zoomControlsEnabled = false;
   bool _zoomGesturesEnabled = true;
   bool _indoorViewEnabled = true;
-  bool _myLocationEnabled = true;
   bool _myTrafficEnabled = false;
-  bool _myLocationButtonEnabled = true;
+  bool _myLocationEnabled = false;
+  bool _myLocationButtonEnabled = false;
   late GoogleMapController _controller;
   bool _nightMode = false;
   String _mapStyle = '';
@@ -65,6 +67,51 @@ class MapUiBodyState extends State<MapUiBody> {
   @override
   void initState() {
     super.initState();
+
+    requestLocationPermission();
+  }
+
+  Future<void> requestLocationPermission() async {
+//     var status = await Permission.location.status;
+//     if (status.isDenied) {
+//       // We haven't asked for permission yet or the permission has been denied before, but not permanently.
+//     }
+
+// // You can also directly ask permission about its status.
+//     if (await Permission.location.isRestricted) {
+//       // The OS restricts access, for example, because of parental controls.
+//     }
+    PermissionStatus status = await Permission.location.status;
+
+    if (!status.isGranted) {
+      PermissionStatus result = await Permission.location.request();
+      if (!result.isGranted) {
+        GlobalMethods.warningDialog(
+            title: "Enable location permission",
+            subtitle: "Please enable location permissions", 
+            fct: () async {
+              Navigator.pop(context);
+            },
+            context: context);
+        // The user did not grant the permission
+        return;
+      } else {
+        // The user granted the permission
+        // Please show me code, how to enable now my location button on google maps
+        setState(() {
+          _myLocationButtonEnabled = true;
+          _myLocationEnabled = true;
+        });
+      }
+    }
+    else {
+      setState(() {
+        _myLocationButtonEnabled = true;
+        _myLocationEnabled = true;
+      });
+    }
+
+    // The permission is granted, you can use the location services now
   }
 
   @override
@@ -276,7 +323,7 @@ class MapUiBodyState extends State<MapUiBody> {
       scrollGesturesEnabled: _scrollGesturesEnabled,
       tiltGesturesEnabled: _tiltGesturesEnabled,
       zoomGesturesEnabled: _zoomGesturesEnabled,
-      zoomControlsEnabled: _zoomControlsEnabled,
+      zoomControlsEnabled: true,
       indoorViewEnabled: _indoorViewEnabled,
       myLocationEnabled: _myLocationEnabled,
       myLocationButtonEnabled: _myLocationButtonEnabled,

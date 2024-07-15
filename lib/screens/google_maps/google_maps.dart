@@ -9,6 +9,7 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:grocery_app/screens/google_maps/google_maps_example.dart';
 import 'package:grocery_app/screens/google_maps/map_ui.dart';
+import 'package:grocery_app/screens/google_maps/place_marker.dart';
 import 'package:grocery_app/screens/vehicles/add_vehicle.dart';
 import 'package:grocery_app/services/global_methods.dart';
 import 'package:grocery_app/services/utils.dart';
@@ -59,26 +60,42 @@ class MapsDemo extends StatelessWidget {
                 //     ctx: context, routeName: AddVehicleScreen.routeName);
               },
               child: TextWidget(
-                text: "Add vehicle",
+                text: "google maps with lots of options",
                 textSize: 20,
                 color: themeState ? Colors.grey.shade300 : Colors.grey.shade800,
                 isTitle: true,
               ),
             ),
-            Text(
-              'Google maps examples',
-              style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.black,
-                  decoration: TextDecoration.lineThrough),
-            ),
-            Text(
-              'Second Google maps examples',
-              style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.black,
-                  decoration: TextDecoration.lineThrough),
-            )
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: BorderSide(
+                    color: color,
+                  ),
+                ),
+                // onPrimary: color,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute<void>(
+                    builder: (_) => Scaffold(
+                          appBar: AppBar(title: Text("Google maps with markers")),
+                          body: const PlaceMarkerPage(),
+                        )));
+                // GlobalMethods.navigateTo(
+                //     ctx: context, routeName: AddVehicleScreen.routeName);
+              },
+              child: TextWidget(
+                text: "Google maps with markers",
+                textSize: 20,
+                color: themeState ? Colors.grey.shade300 : Colors.grey.shade800,
+                isTitle: true,
+              ),
+            ), 
           ],
         )
         // ListView.builder(

@@ -63,6 +63,8 @@ dependencies:
   
   # flutter_stripe: ^8.0.0+1
   http: ^1.2.1 
+  json_annotation: ^4.9.0
+  json_serializable: ^6.8.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -74,6 +76,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
   dio: ^5.4.3
+  build_runner: ^2.4.11
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

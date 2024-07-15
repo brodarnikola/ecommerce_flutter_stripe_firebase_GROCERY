@@ -11,6 +11,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:grocery_app/services/global_methods.dart';
 
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:developer' as developer; 
+
+import 'package:grocery_app/models/locations.dart' as locations;
+
 import 'dart:developer' as developer;
 
 final LatLngBounds sydneyBounds = LatLngBounds(
@@ -350,6 +354,8 @@ class _MapUiPageState extends State<MapUiPage> with WidgetsBindingObserver {
     return rootBundle.loadString(path);
   }
 
+  final Map<String, Marker> _markers = {}; 
+
   // Should only be called if _isMapCreated is true.
   Widget _nightModeToggler() {
     assert(_isMapCreated);
@@ -387,6 +393,7 @@ class _MapUiPageState extends State<MapUiPage> with WidgetsBindingObserver {
       myLocationButtonEnabled: _myLocationButtonEnabled,
       trafficEnabled: _myTrafficEnabled,
       onCameraMove: _updateCameraPosition,
+      markers: _markers.values.toSet(),
     );
 
     final List<Widget> columnChildren = <Widget>[
@@ -446,7 +453,28 @@ class _MapUiPageState extends State<MapUiPage> with WidgetsBindingObserver {
     });
   }
 
-  void onMapCreated(GoogleMapController controller) {
+  void onMapCreated(GoogleMapController controller) async {
+
+    // final googleOffices = await  locations.getGoogleOffices();
+    // developer.log("Google offices: $googleOffices"); 
+    // print("Google offices: $googleOffices");
+    
+    // setState(() {
+    //   _markers.clear();
+    //   for (final office in googleOffices!.offices) {
+    //     final marker = Marker(
+    //       markerId: MarkerId(office.name),
+    //       position: LatLng(office.lat, office.lng),
+    //       infoWindow: InfoWindow(
+    //         title: office.name,
+    //         snippet: office.address,
+    //       ),
+    //     );
+    //     _markers[office.name] = marker;
+    //   }
+    // });
+
+
     setState(() {
       _controller = controller;
       _isMapCreated = true;

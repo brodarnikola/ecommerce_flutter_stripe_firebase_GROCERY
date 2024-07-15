@@ -1,23 +1,26 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:grocery_app/services/global_methods.dart';
+
+import 'dart:developer' as developer;
+
+import 'package:permission_handler/permission_handler.dart';
+import 'package:geolocator/geolocator.dart';
 
 class PlaceMarkerPage extends StatefulWidget {
-
   const PlaceMarkerPage({Key? key}) : super(key: key);
 
   @override
   State<PlaceMarkerPage> createState() => _PlaceMarkerPage();
 }
 
-typedef MarkerUpdateAction = Marker Function(Marker marker);
-
-class _PlaceMarkerPage extends State<PlaceMarkerPage> {
-  
+class _PlaceMarkerPage extends State<PlaceMarkerPage>
+    with WidgetsBindingObserver {
   static const LatLng center = LatLng(45.0838331, 13.6468675);
+  MapType _mapType = MapType.normal;
 
   GoogleMapController? controller;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
@@ -25,15 +28,170 @@ class _PlaceMarkerPage extends State<PlaceMarkerPage> {
   int _markerIdCounter = 1;
   LatLng? markerPosition;
 
+  bool _myLocationEnabled = false;
+  bool _myLocationButtonEnabled = false;
+  bool _isRequestingPermission = false;
+
+  LatLng _initialcameraposition = const LatLng(25.0838331, 33.6468675);
+
   // ignore: use_setters_to_change_properties
   void _onMapCreated(GoogleMapController controller) {
+    // mapController.setMapStyle(mapOption3);
+    // this.controller.future.lessThanOrEqualTo((value) {
+    //   value.setMapStyle(_mapStyleString);
+    // });
     this.controller = controller;
+    _initialcameraposition = _initialcameraposition;
+  }
+
+  @override
+  didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    developer.log("DID CHANGE APP location status: ");
+    if (state == AppLifecycleState.resumed && !_isRequestingPermission) {
+      checkLocationPermission();
+    }
+  }
+
+  void checkLocationPermission() async {
+    var status = await Permission.location.status;
+    if (status.isGranted) {
+      _add();
+      _add();
+      _add();
+      setState(() {
+        _myLocationButtonEnabled = true;
+        _myLocationEnabled = true;
+      });
+    } else {
+      _isRequestingPermission = true;
+      requestLocationPermission();
+      // Handle the case where the permission is not granted
+    }
+  }
+
+  void _getUserLocation() async {
+    var status = await Permission.location.status;
+    if (status.isGranted) {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      developer
+          .log("GET USER location: ${position.latitude} ${position.longitude}");
+      setState(() {
+        _initialcameraposition = LatLng(position.latitude, position.longitude);
+      });
+      developer.log("GET USER controller: $controller");
+      if (controller != null) _onMapCreated(controller!);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    developer.log("INIT location status: ");
+    // _initialcameraposition = LatLng(0.0, 0.0);
+    WidgetsBinding.instance.addObserver(this);
+    checkLocationPermission();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getUserLocation();
+    });
   }
 
   @override
   void dispose() {
+    developer.log("DISPOSE location status: ");
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
+
+  Future<void> requestLocationPermission() async {
+    PermissionStatus status = await Permission.location.status;
+
+    print("location status: $status");
+
+    developer.log("location status: $status");
+
+    await Permission.location.onDeniedCallback(() {
+      GlobalMethods.warningDialog(
+          title: "Enable location permission",
+          subtitle: "Please enable location permissions",
+          fct: () async {
+            Navigator.pop(context);
+          },
+          context: context);
+      // The user did not grant the permission
+      return;
+      // Your code
+    }).onGrantedCallback(() {
+      setState(() {
+        _myLocationButtonEnabled = true;
+        _myLocationEnabled = true;
+      });
+      _isRequestingPermission = false;
+      _add();
+      _add();
+      _add();
+    }).onPermanentlyDeniedCallback(() {
+      GlobalMethods.warningDialog(
+          title: "Enable location permission",
+          subtitle:
+              "You have permantely disabled location permission. Please enable location permissions to use this feature.",
+          fct: () async {
+            _isRequestingPermission = false;
+            openAppSettings();
+          },
+          context: context);
+      // The user did not grant the permission
+      return;
+      // Your code
+    }).onRestrictedCallback(() {
+      // The OS restricts access, for example because of parental controls.
+      // Your code
+    }).onLimitedCallback(() {
+      // Your code
+    }).onProvisionalCallback(() {
+      // Your code
+    }).request();
+
+    // PermissionStatus status = await Permission.location.status;
+
+    // print("location status: $status");
+
+    // if (!status.isGranted) {
+    //   PermissionStatus result = await Permission.location.request();
+    //   if (!result.isGranted) {
+    //     GlobalMethods.warningDialog(
+    //         title: "Enable location permission",
+    //         subtitle: "Please enable location permissions",
+    //         fct: () async {
+    //           Navigator.pop(context);
+    //         },
+    //         context: context);
+    //     // The user did not grant the permission
+    //     return;
+    //   } else {
+    //     // The user granted the permission
+    //     // Please show me code, how to enable now my location button on google maps
+    //     setState(() {
+    //       _myLocationButtonEnabled = true;
+    //       _myLocationEnabled = true;
+    //     });
+    //   }
+    // }
+    // else {
+    //   setState(() {
+    //     _myLocationButtonEnabled = true;
+    //     _myLocationEnabled = true;
+    //   });
+    // }
+
+    // The permission is granted, you can use the location services now
+  }
+
+  // @override
+  // void dispose() {
+  //   super.dispose();
+  // }
 
   void _onMarkerTapped(MarkerId markerId) {
     final Marker? tappedMarker = markers[markerId];
@@ -58,41 +216,6 @@ class _PlaceMarkerPage extends State<PlaceMarkerPage> {
     }
   }
 
-  Future<void> _onMarkerDrag(MarkerId markerId, LatLng newPosition) async {
-    setState(() {
-      markerPosition = newPosition;
-    });
-  }
-
-  Future<void> _onMarkerDragEnd(MarkerId markerId, LatLng newPosition) async {
-    final Marker? tappedMarker = markers[markerId];
-    if (tappedMarker != null) {
-      setState(() {
-        markerPosition = null;
-      });
-      await showDialog<void>(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('OK'),
-                    onPressed: () => Navigator.of(context).pop(),
-                  )
-                ],
-                content: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 66),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text('Old position: ${tappedMarker.position}'),
-                        Text('New position: $newPosition'),
-                      ],
-                    )));
-          });
-    }
-  }
-
   void _add() {
     final int markerCount = markers.length;
 
@@ -111,9 +234,7 @@ class _PlaceMarkerPage extends State<PlaceMarkerPage> {
         center.longitude + cos(_markerIdCounter * pi / 6.0) / 20.0,
       ),
       infoWindow: InfoWindow(title: markerIdVal, snippet: '*'),
-      onTap: () => _onMarkerTapped(markerId),
-      onDragEnd: (LatLng position) => _onMarkerDragEnd(markerId, position),
-      onDrag: (LatLng position) => _onMarkerDrag(markerId, position),
+      onTap: () => _onMarkerTapped(markerId), 
     );
 
     setState(() {
@@ -129,258 +250,125 @@ class _PlaceMarkerPage extends State<PlaceMarkerPage> {
     });
   }
 
-  void _changePosition(MarkerId markerId) {
-    final Marker marker = markers[markerId]!;
-    final LatLng current = marker.position;
-    final Offset offset = Offset(
-      center.latitude - current.latitude,
-      center.longitude - current.longitude,
-    );
+  void _onMapTypeButtonPressed() {
     setState(() {
-      markers[markerId] = marker.copyWith(
-        positionParam: LatLng(
-          center.latitude + offset.dy,
-          center.longitude + offset.dx,
-        ),
-      );
+      _mapType = MapType.values[(_mapType.index + 1) % MapType.values.length];
     });
   }
-
-  void _changeAnchor(MarkerId markerId) {
-    final Marker marker = markers[markerId]!;
-    final Offset currentAnchor = marker.anchor;
-    final Offset newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
-    setState(() {
-      markers[markerId] = marker.copyWith(
-        anchorParam: newAnchor,
-      );
-    });
-  }
-
-  Future<void> _changeInfoAnchor(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
-    final Offset currentAnchor = marker.infoWindow.anchor;
-    final Offset newAnchor = Offset(1.0 - currentAnchor.dy, currentAnchor.dx);
-    setState(() {
-      markers[markerId] = marker.copyWith(
-        infoWindowParam: marker.infoWindow.copyWith(
-          anchorParam: newAnchor,
-        ),
-      );
-    });
-  }
-
-  Future<void> _toggleDraggable(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
-    setState(() {
-      markers[markerId] = marker.copyWith(
-        draggableParam: !marker.draggable,
-      );
-    });
-  }
-
-  Future<void> _toggleFlat(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
-    setState(() {
-      markers[markerId] = marker.copyWith(
-        flatParam: !marker.flat,
-      );
-    });
-  }
-
-  Future<void> _changeInfo(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
-    final String newSnippet = '${marker.infoWindow.snippet!}*';
-    setState(() {
-      markers[markerId] = marker.copyWith(
-        infoWindowParam: marker.infoWindow.copyWith(
-          snippetParam: newSnippet,
-        ),
-      );
-    });
-  }
-
-  Future<void> _changeAlpha(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
-    final double current = marker.alpha;
-    setState(() {
-      markers[markerId] = marker.copyWith(
-        alphaParam: current < 0.1 ? 1.0 : current * 0.75,
-      );
-    });
-  }
-
-  Future<void> _changeRotation(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
-    final double current = marker.rotation;
-    setState(() {
-      markers[markerId] = marker.copyWith(
-        rotationParam: current == 330.0 ? 0.0 : current + 30.0,
-      );
-    });
-  }
-
-  Future<void> _toggleVisible(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
-    setState(() {
-      markers[markerId] = marker.copyWith(
-        visibleParam: !marker.visible,
-      );
-    });
-  }
-
-  Future<void> _changeZIndex(MarkerId markerId) async {
-    final Marker marker = markers[markerId]!;
-    final double current = marker.zIndex;
-    setState(() {
-      markers[markerId] = marker.copyWith(
-        zIndexParam: current == 12.0 ? 0.0 : current + 1.0,
-      );
-    });
-  }
-
-  void _setMarkerIcon(MarkerId markerId, BitmapDescriptor assetIcon) {
-    final Marker marker = markers[markerId]!;
-    setState(() {
-      markers[markerId] = marker.copyWith(
-        iconParam: assetIcon,
-      );
-    });
-  }
-
-  // Future<BitmapDescriptor> _getMarkerIcon(BuildContext context) async {
-  //   const Size canvasSize = Size(48, 48);
-  //   final ByteData bytes = await createCustomMarkerIconImage(size: canvasSize);
-  //   return BytesMapBitmap(bytes.buffer.asUint8List());
-  // }
 
   @override
   Widget build(BuildContext context) {
-    final MarkerId? selectedId = selectedMarker;
-    return Stack(children: <Widget>[
-      Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Scaffold(
+      // appBar: AppBar(title: Text('Google Maps in Flutter')),
+      body: Stack(
         children: <Widget>[
-          Expanded(
-            child: GoogleMap(
+          GoogleMap(
               onMapCreated: _onMapCreated,
-              initialCameraPosition: const CameraPosition(
-                target: LatLng(-33.852, 151.211),
+              initialCameraPosition: CameraPosition(
+                target: _initialcameraposition,
                 zoom: 11.0,
               ),
-              markers: Set<Marker>.of(markers.values),
+              mapType: _mapType, // how to change map type on button click
+              //       mapType:  {
+              //            final MapType nextType =
+              // MapType.values[(_mapType.index + 1) % MapType.values.length];
+              // setState(() {
+              //   _mapType = nextType;
+              // });
+              //       },
+              myLocationEnabled: _myLocationEnabled,
+              myLocationButtonEnabled: _myLocationButtonEnabled,
+              markers: Set<Marker>.of(markers.values)),
+          Positioned(
+            top: 10.0,
+            left: 10.0,
+            child: FloatingActionButton(
+              onPressed: _onMapTypeButtonPressed,
+              materialTapTargetSize: MaterialTapTargetSize.padded,
+              backgroundColor: Colors.green,
+              child: const Icon(Icons.map, size: 36.0),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              TextButton(
-                onPressed: _add,
-                child: const Text('Add'),
-              ),
-              TextButton(
-                onPressed:
-                    selectedId == null ? null : () => _remove(selectedId),
-                child: const Text('Remove'),
-              ),
-            ],
-          ),
-          // Wrap(
-          //   alignment: WrapAlignment.spaceEvenly,
-          //   children: <Widget>[
-          //     TextButton(
-          //       onPressed:
-          //           selectedId == null ? null : () => _changeInfo(selectedId),
-          //       child: const Text('change info'),
-          //     ),
-          //     TextButton(
-          //       onPressed: selectedId == null
-          //           ? null
-          //           : () => _changeInfoAnchor(selectedId),
-          //       child: const Text('change info anchor'),
-          //     ),
-          //     TextButton(
-          //       onPressed:
-          //           selectedId == null ? null : () => _changeAlpha(selectedId),
-          //       child: const Text('change alpha'),
-          //     ),
-          //     TextButton(
-          //       onPressed:
-          //           selectedId == null ? null : () => _changeAnchor(selectedId),
-          //       child: const Text('change anchor'),
-          //     ),
-          //     TextButton(
-          //       onPressed: selectedId == null
-          //           ? null
-          //           : () => _toggleDraggable(selectedId),
-          //       child: const Text('toggle draggable'),
-          //     ),
-          //     TextButton(
-          //       onPressed:
-          //           selectedId == null ? null : () => _toggleFlat(selectedId),
-          //       child: const Text('toggle flat'),
-          //     ),
-          //     TextButton(
-          //       onPressed: selectedId == null
-          //           ? null
-          //           : () => _changePosition(selectedId),
-          //       child: const Text('change position'),
-          //     ),
-          //     TextButton(
-          //       onPressed: selectedId == null
-          //           ? null
-          //           : () => _changeRotation(selectedId),
-          //       child: const Text('change rotation'),
-          //     ),
-          //     TextButton(
-          //       onPressed: selectedId == null
-          //           ? null
-          //           : () => _toggleVisible(selectedId),
-          //       child: const Text('toggle visible'),
-          //     ),
-          //     TextButton(
-          //       onPressed:
-          //           selectedId == null ? null : () => _changeZIndex(selectedId),
-          //       child: const Text('change zIndex'),
-          //     ),
-          //     TextButton(
-          //       onPressed: selectedId == null
-          //           ? null
-          //           : () {
-          //               // _getMarkerIcon(context).then(
-          //               //   (BitmapDescriptor icon) {
-          //               //     _setMarkerIcon(selectedId, icon);
-          //               //   },
-          //               // );
-          //             },
-          //       child: const Text('set marker icon'),
-          //     ),
-          //   ],
-          // ),
         ],
       ),
-      // Visibility(
-      //   visible: markerPosition != null,
-      //   child: Container(
-      //     color: Colors.white70,
-      //     height: 30,
-      //     padding: const EdgeInsets.only(left: 12, right: 12),
-      //     child: Row(
-      //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //       children: <Widget>[
-      //         if (markerPosition == null)
-      //           Container()
-      //         else
-      //           Expanded(child: Text('lat: ${markerPosition!.latitude}')),
-      //         if (markerPosition == null)
-      //           Container()
-      //         else
-      //           Expanded(child: Text('lng: ${markerPosition!.longitude}')),
-      //       ],
-      //     ),
-      //   ),
-      // ),
-    ]);
+    );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   final MarkerId? selectedId = selectedMarker;
+  //   return Stack(
+  //     children: <Widget>[
+  //     Column(
+  //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //       crossAxisAlignment: CrossAxisAlignment.stretch,
+  //       children: <Widget>[
+  //         // Expanded(
+  //             // child:
+  // GoogleMap(
+  //   onMapCreated: _onMapCreated,
+  //   initialCameraPosition: const CameraPosition(
+  //     target: LatLng(45.0838331, 13.6468675),
+  //     zoom: 11.0,
+  //   ),
+  //   // mapType: _mapType, // how to change map type on button click
+  //   //       mapType:  {
+  //   //            final MapType nextType =
+  //   // MapType.values[(_mapType.index + 1) % MapType.values.length];
+  //   // setState(() {
+  //   //   _mapType = nextType;
+  //   // });
+  //   //       },
+  //   myLocationEnabled: _myLocationEnabled,
+  //   myLocationButtonEnabled: _myLocationButtonEnabled,
+  //   markers: Set<Marker>.of(markers.values),
+  //             ),
+  //         // Row(
+  //         //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //         //   children: <Widget>[
+  //         //     TextButton(
+  //         //       onPressed: _add,
+  //         //       child: const Text('Add'),
+  //         //     ),
+  //         //     TextButton(
+  //         //       onPressed:
+  //         //           selectedId == null ? null : () => _remove(selectedId),
+  //         //       child: const Text('Remove'),
+  //         //     ),
+  //         //   ],
+  //         // ),
+  //             Positioned(
+  //               top: 10.0,
+  //               left: 10.0,
+  //               child: FloatingActionButton(
+  //                 onPressed: _onMapTypeButtonPressed,
+  //                 materialTapTargetSize: MaterialTapTargetSize.padded,
+  //                 backgroundColor: Colors.green,
+  //                 child: const Icon(Icons.map,
+  //                     size: 36.0), // This is the icon for the button
+  //               ),
+  //             ),
+  //     // Visibility(
+  //     //   visible: markerPosition != null,
+  //     //   child: Container(
+  //     //     color: Colors.white70,
+  //     //     height: 30,
+  //     //     padding: const EdgeInsets.only(left: 12, right: 12),
+  //     //     child: Row(
+  //     //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+  //     //       children: <Widget>[
+  //     //         if (markerPosition == null)
+  //     //           Container()
+  //     //         else
+  //     //           Expanded(child: Text('lat: ${markerPosition!.latitude}')),
+  //     //         if (markerPosition == null)
+  //     //           Container()
+  //     //         else
+  //     //           Expanded(child: Text('lng: ${markerPosition!.longitude}')),
+  //     //       ],
+  //     //     ),
+  //     //   ),
+  //     // ),
+  //   ]);
+  // }
 }

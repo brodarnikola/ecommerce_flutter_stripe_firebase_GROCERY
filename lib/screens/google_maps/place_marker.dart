@@ -36,10 +36,6 @@ class _PlaceMarkerPage extends State<PlaceMarkerPage>
 
   // ignore: use_setters_to_change_properties
   void _onMapCreated(GoogleMapController controller) {
-    // mapController.setMapStyle(mapOption3);
-    // this.controller.future.lessThanOrEqualTo((value) {
-    //   value.setMapStyle(_mapStyleString);
-    // });
     this.controller = controller;
     _initialcameraposition = _initialcameraposition;
   }
@@ -70,19 +66,17 @@ class _PlaceMarkerPage extends State<PlaceMarkerPage>
     }
   }
 
-  void _getUserLocation() async {
+  Future<LatLng> _getUserLocation() async {
     var status = await Permission.location.status;
     if (status.isGranted) {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       developer
           .log("GET USER location: ${position.latitude} ${position.longitude}");
-      setState(() {
-        _initialcameraposition = LatLng(position.latitude, position.longitude);
-      });
       developer.log("GET USER controller: $controller");
-      if (controller != null) _onMapCreated(controller!);
+      return LatLng(position.latitude, position.longitude);
     }
+    return const LatLng(0.0, 0.0);
   }
 
   @override
@@ -234,7 +228,7 @@ class _PlaceMarkerPage extends State<PlaceMarkerPage>
         center.longitude + cos(_markerIdCounter * pi / 6.0) / 20.0,
       ),
       infoWindow: InfoWindow(title: markerIdVal, snippet: '*'),
-      onTap: () => _onMarkerTapped(markerId), 
+      onTap: () => _onMarkerTapped(markerId),
     );
 
     setState(() {
@@ -258,39 +252,42 @@ class _PlaceMarkerPage extends State<PlaceMarkerPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(title: Text('Google Maps in Flutter')),
-      body: Stack(
-        children: <Widget>[
-          GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: _initialcameraposition,
-                zoom: 11.0,
-              ),
-              mapType: _mapType, // how to change map type on button click
-              //       mapType:  {
-              //            final MapType nextType =
-              // MapType.values[(_mapType.index + 1) % MapType.values.length];
-              // setState(() {
-              //   _mapType = nextType;
-              // });
-              //       },
-              myLocationEnabled: _myLocationEnabled,
-              myLocationButtonEnabled: _myLocationButtonEnabled,
-              markers: Set<Marker>.of(markers.values)),
-          Positioned(
-            top: 10.0,
-            left: 10.0,
-            child: FloatingActionButton(
-              onPressed: _onMapTypeButtonPressed,
-              materialTapTargetSize: MaterialTapTargetSize.padded,
-              backgroundColor: Colors.green,
-              child: const Icon(Icons.map, size: 36.0),
+    return FutureBuilder<LatLng>(
+      future: _getUserLocation(),
+      builder: (BuildContext context, AsyncSnapshot<LatLng> snapshot) {
+        if (snapshot.hasData) {
+          return Scaffold(
+            body: Stack(
+              children: <Widget>[
+                GoogleMap(
+                    onMapCreated: _onMapCreated,
+                    initialCameraPosition: CameraPosition(
+                      target: snapshot.data ?? const LatLng(0.0, 0.0),
+                      zoom: 11.0,
+                    ),
+                    mapType: _mapType, // how to change map type on button click
+                    myLocationEnabled: _myLocationEnabled,
+                    myLocationButtonEnabled: _myLocationButtonEnabled,
+                    markers: Set<Marker>.of(markers.values)),
+                Positioned(
+                  top: 60.0,
+                  right: 5.0,
+                  child: FloatingActionButton(
+                    onPressed: _onMapTypeButtonPressed,
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    backgroundColor: Colors.green,
+                    child: const Icon(Icons.map, size: 36.0),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
+          );
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 

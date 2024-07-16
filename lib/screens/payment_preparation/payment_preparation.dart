@@ -7,6 +7,7 @@ import 'package:grocery_app/providers/locations_provider.dart';
 import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'dart:developer' as developer;
 
 class ParkingReservationScreen extends StatefulWidget {
   static const routeName = '/PaymentsScreen';
@@ -47,41 +48,55 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
   late VehiclesModel? _selectedVehicle;
   late CreditCardsModel? _selectedCreditCard;
   late LocationsModel? _selectedLocation;
+  late ParkingTypesModel? _selectedParkingType;
 
   late List<VehiclesModel> vehiclesList;
-  late List<CreditCardsModel> creditCardList; 
+  late List<CreditCardsModel> creditCardList;
   late List<LocationsModel> locationsList;
+  late List<ParkingTypesModel> parkingTypesList;
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
 
-    final vehiclesProvider = Provider.of<VehiclesProvider>(context, listen: false);
+    final vehiclesProvider =
+        Provider.of<VehiclesProvider>(context, listen: false);
     // final vehiclesData = vehiclesProvider.getVehicles;
 
-    final creditCardsProvider = Provider.of<CreditCardsProvider>(context, listen: false);
+    final creditCardsProvider =
+        Provider.of<CreditCardsProvider>(context, listen: false);
     // final creditCardData = creditCardsProvider.getCreditCards;
 
-    final locationsProvider = Provider.of<LocationsProvider>(context, listen: false);
+    final locationsProvider =
+        Provider.of<LocationsProvider>(context, listen: false);
 
     locationsList = locationsProvider.getLocations.toList();
+    parkingTypesList = locationsProvider.getParkingTypes.toList();
 
     vehiclesList = vehiclesProvider.getVehicles.toList();
 
     creditCardList = creditCardsProvider.getCreditCards.toList();
-    // creditCardData.map((element) => element.Name.toString()).toList();
 
-    if (vehiclesList.isNotEmpty) _selectedVehicle = vehiclesList[0]; 
+    if (vehiclesList.isNotEmpty) {
+      _selectedVehicle = vehiclesList[0];
+    }
 
-    if (creditCardList.isNotEmpty) _selectedCreditCard = creditCardList[0];  //.MaskedCreditCardNumber.toString();
+    if (creditCardList.isNotEmpty) {
+      _selectedCreditCard =
+          creditCardList[0]; //.MaskedCreditCardNumber.toString();
+    }
 
-    if (locationsList.isNotEmpty) _selectedLocation = locationsList[0]; 
+    if (locationsList.isNotEmpty) {
+      _selectedLocation = locationsList[0];
+    }
+
+    if (parkingTypesList.isNotEmpty) {
+      _selectedParkingType = parkingTypesList[0];
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
       body: Center(
         child: loading
@@ -123,7 +138,9 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
                             labelText: 'Select payment',
                             border: OutlineInputBorder(),
                           ),
-                          items: creditCardList.map<DropdownMenuItem<CreditCardsModel>>((CreditCardsModel value) {
+                          items: creditCardList
+                              .map<DropdownMenuItem<CreditCardsModel>>(
+                                  (CreditCardsModel value) {
                             return DropdownMenuItem<CreditCardsModel>(
                               value: value,
                               child: Row(
@@ -150,7 +167,8 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
                             border: OutlineInputBorder(),
                           ),
                           items: vehiclesList
-                              .map<DropdownMenuItem<VehiclesModel>>((VehiclesModel value) {
+                              .map<DropdownMenuItem<VehiclesModel>>(
+                                  (VehiclesModel value) {
                             return DropdownMenuItem<VehiclesModel>(
                               value: value,
                               child: Row(
@@ -176,7 +194,9 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
                             labelText: 'Select location',
                             border: OutlineInputBorder(),
                           ),
-                          items: locationsList.map<DropdownMenuItem<LocationsModel>>((LocationsModel value) {
+                          items: locationsList
+                              .map<DropdownMenuItem<LocationsModel>>(
+                                  (LocationsModel value) {
                             return DropdownMenuItem<LocationsModel>(
                               value: value,
                               child: Row(
@@ -189,82 +209,34 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
                             );
                           }).toList(),
                         )),
-                    DropdownButton(
-                      // Initial Value
-                      value: dropdownvalue,
-
-                      // Down Arrow Icon
-                      icon: const Icon(Icons.keyboard_arrow_down),
-
-                      // Array list of items
-                      items: items.map((String items) {
-                        return DropdownMenuItem(
-                          value: items,
-                          child: Text(items),
-                        );
-                      }).toList(),
-                      // After selecting the desired option,it will
-                      // change button value to selected value
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          dropdownvalue = newValue!;
-                        });
-                      },
-                    ),
-                    // DropdownButton<String>(
-                    //   hint: const Text('Select Location'),
-                    //   value: selectedLocation,
-                    //   items: <String>['Location 1', 'Location 2', 'Location 3']
-                    //       .map<DropdownMenuItem<String>>((String value) {
-                    //     return DropdownMenuItem<String>(
-                    //       value: value,
-                    //       child: Text(value),
-                    //     );
-                    //   }).toList(),
-                    //   onChanged: (String? newValue) {
-                    //     setState(() {
-                    //       selectedLocation = newValue ?? "";
-                    //     });
-                    //   },
-                    // ),
-                    // DropdownButtonFormField<Object>(
-                    //   decoration:
-                    //       const InputDecoration(labelText: 'Credit/Debit Card'),
-                    //   items: [], // Add your card items here
-                    //   onChanged: (value) {
-                    //     setState(() {
-                    //       selectedCard = "awesome value";
-                    //     });
-                    //   },
-                    // ),
-                    DropdownButtonFormField<Object>(
-                      decoration: const InputDecoration(labelText: 'Vehicle'),
-                      items: [], // Add your vehicle items here
-                      onChanged: (value) {
-                        setState(() {
-                          selectedVehicle = "awesome value";
-                        });
-                      },
-                    ),
-                    DropdownButtonFormField<Object>(
-                      decoration: const InputDecoration(labelText: 'Location'),
-                      items: [], // Add your location items here
-                      onChanged: (value) {
-                        setState(() {
-                          selectedLocation = "awesome value";
-                        });
-                      },
-                    ),
-                    DropdownButtonFormField<Object>(
-                      decoration:
-                          const InputDecoration(labelText: 'Parking Slot Type'),
-                      items: [], // Add your parking slot type items here
-                      onChanged: (value) {
-                        setState(() {
-                          selectedParkingSlotType = "awesome value";
-                        });
-                      },
-                    ),
+                    Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: DropdownButtonFormField<ParkingTypesModel>(
+                          value: _selectedParkingType,
+                          onChanged: (ParkingTypesModel? value) {
+                            setState(() {
+                              _selectedParkingType = value!;
+                            });
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Select location',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: parkingTypesList
+                              .map<DropdownMenuItem<ParkingTypesModel>>(
+                                  (ParkingTypesModel value) {
+                            return DropdownMenuItem<ParkingTypesModel>(
+                              value: value,
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.star),
+                                  const SizedBox(width: 10),
+                                  Text(value.Naziv ?? ""),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        )),
                     DateTimePicker(
                       labelText: 'From',
                       selectedDate: selectedStartTime,
@@ -273,17 +245,17 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
                           selectedStartTime = date;
                         });
                       },
-                      key: const ObjectKey("DateTimePicker1"),
+                      key: const ObjectKey("DateTimePickerFrom"),
                     ),
                     DateTimePicker(
-                      labelText: 'To',
+                      labelText: 'Until',
                       selectedDate: selectedEndTime,
                       selectDate: (DateTime date) {
                         setState(() {
                           selectedEndTime = date;
                         });
                       },
-                      key: const ObjectKey("DateTimePicker2"),
+                      key: const ObjectKey("DateTimePickerUntil"),
                     ),
                     ElevatedButton(
                       onPressed: () {
@@ -350,13 +322,32 @@ class DateTimePicker extends StatelessWidget {
       : super(key: key);
 
   Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != selectedDate) selectDate(picked);
+    if (pickedDate != null && pickedDate != selectedDate) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+
+      if (pickedTime != null) {
+        final DateTime pickedDateTime = DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+ 
+        developer.log("Picked date time is $pickedDateTime"); 
+        selectDate(pickedDateTime);
+      }
+    }
+    // if (picked != null && picked != selectedDate) selectDate(picked);
   }
 
   @override
@@ -365,7 +356,8 @@ class DateTimePicker extends StatelessWidget {
       onTap: () => _selectDate(context),
       child: InputDecorator(
         decoration: InputDecoration(labelText: labelText),
-        child: Text(DateFormat.yMd().format(selectedDate)),
+        child: Text(DateFormat('dd-MM-yyyy HH:mm').format(
+            selectedDate)), // which format I need to use to display date and time
       ),
     );
   }

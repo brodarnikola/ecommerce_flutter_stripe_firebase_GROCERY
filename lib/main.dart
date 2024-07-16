@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:grocery_app/inner_screens/on_sale_screen.dart';
 import 'package:grocery_app/providers/credit_cards_provider.dart';
+import 'package:grocery_app/providers/locations_provider.dart';
 import 'package:grocery_app/providers/transactions_provider.dart';
 import 'package:grocery_app/providers/reservations_provider.dart';
 import 'package:grocery_app/providers/shared_pref_provider.dart';
@@ -169,6 +170,8 @@ class _MyAppState extends State<MyApp> {
               ),
               ChangeNotifierProvider(
                 create: (_) => TransactionsProvider(),
+              ),ChangeNotifierProvider(
+                create: (_) => LocationsProvider(),
               ),
             ],
             child: Consumer<SharedPrefsProvider>(

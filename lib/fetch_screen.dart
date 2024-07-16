@@ -7,6 +7,7 @@ import 'package:grocery_app/consts/constants.dart';
 import 'package:grocery_app/consts/firebase_consts.dart';
 import 'package:grocery_app/providers/cart_provider.dart';
 import 'package:grocery_app/providers/credit_cards_provider.dart';
+import 'package:grocery_app/providers/locations_provider.dart';
 import 'package:grocery_app/providers/orders_provider.dart';
 import 'package:grocery_app/providers/transactions_provider.dart';
 import 'package:grocery_app/providers/reservations_provider.dart';
@@ -45,6 +46,8 @@ class _FetchScreenState extends State<FetchScreen> {
           Provider.of<ReservationsProvider>(context, listen: false);
       final transactionsProvider =
           Provider.of<TransactionsProvider>(context, listen: false);
+      final locationsAndParkingTypesProvider =
+          Provider.of<LocationsProvider>(context, listen: false);
 
       final productsProvider =
           Provider.of<ProductsProvider>(context, listen: false);
@@ -72,6 +75,7 @@ class _FetchScreenState extends State<FetchScreen> {
           vehiclesProvider.fetchVehicles(context),
           creditCardsProvider.fetchCreditCards(context),
           reservationsProvider.fetchReservations(context),
+          locationsAndParkingTypesProvider.fetchLocationsAndParkingTypes(context),
           // transactionsProvider.fetchTransactions(context)
         ]);
 

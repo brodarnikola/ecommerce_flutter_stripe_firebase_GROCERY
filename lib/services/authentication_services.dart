@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:grocery_app/consts/DIO_package/dio_package.dart';
 import 'package:grocery_app/consts/DIO_package/response.dart';
 import 'package:grocery_app/models/credit_cards_model.dart';
+import 'package:grocery_app/models/locations_model.dart';
 import 'package:grocery_app/models/reservations_model.dart';
 import 'package:grocery_app/models/transactions_model.dart';
 import 'dart:developer' as developer;
@@ -69,6 +70,54 @@ class AuthenticationServices {
       return apiRes;
     } catch (err) {
       print("Catched transactions exception is $err");
+      throw Exception(err.toString());
+    }
+  }
+
+   Future<ApiResponse<LocationsAndParkingTypesModel>> getLocationsAndParkingTypes(
+      BuildContext context) async {
+    try {
+      final sharedPrefState =
+          Provider.of<SharedPrefsProvider>(context, listen: false);
+
+// GetPaymentPreparation?userDeviceGUID=5a60acc2-69ad-487b-b73d-91f095f52f8e
+
+      var res = await Api()
+          .get("/GetPaymentPreparation?userDeviceGUID=${sharedPrefState.getGUID}",
+              queryParameters: {},
+              options: Options(headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer ${sharedPrefState.getBearerToken}"
+                // "Bearer $token",
+              }),
+              addRequestInterceptor: false,
+              cancelToken: null,
+              onReceiveProgress: (p0, p1) => {});
+
+      print("11 Location and parking types response body is 11  ${res?.data}");
+
+      Map<String, dynamic> jsonData = res?.data;
+      LocationsAndParkingTypesModel transactionResponse =
+          LocationsAndParkingTypesModel.fromJson(jsonData);
+      // Now you have a list of Transactions objects
+      // You can print or use them as you wish
+      for (var transaction in transactionResponse.locations) {
+        print(transaction.Naziv);
+      } 
+
+      var apiRes = ApiResponse<LocationsAndParkingTypesModel>(
+        success: true,
+        message: "Success",
+        data: transactionResponse,
+      );
+
+      apiRes.data.parkingType.forEach((element) {
+        print("Parking types body ${element}");
+      });
+
+      return apiRes;
+    } catch (err) {
+      print("Catched Location and parking types exception is $err");
       throw Exception(err.toString());
     }
   }

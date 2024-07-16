@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_app/models/credit_cards_model.dart';
+import 'package:grocery_app/models/locations_model.dart';
 import 'package:grocery_app/models/vehicles_model.dart';
 import 'package:grocery_app/providers/credit_cards_provider.dart';
+import 'package:grocery_app/providers/locations_provider.dart';
 import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -40,13 +42,15 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
 
   String _selectedItem = "Credit card 1";
   // String _selectedVehicle = "Vehicle 1";
-  String _selectedLocation = "Location 1";
+  // String _selectedLocation = "Location 1";
 
   late VehiclesModel? _selectedVehicle;
   late CreditCardsModel? _selectedCreditCard;
+  late LocationsModel? _selectedLocation;
 
   late List<VehiclesModel> vehiclesList;
-  late List<CreditCardsModel> creditCardList;
+  late List<CreditCardsModel> creditCardList; 
+  late List<LocationsModel> locationsList;
 
   @override
   void initState() { 
@@ -58,6 +62,10 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
     final creditCardsProvider = Provider.of<CreditCardsProvider>(context, listen: false);
     // final creditCardData = creditCardsProvider.getCreditCards;
 
+    final locationsProvider = Provider.of<LocationsProvider>(context, listen: false);
+
+    locationsList = locationsProvider.getLocations.toList();
+
     vehiclesList = vehiclesProvider.getVehicles.toList();
 
     creditCardList = creditCardsProvider.getCreditCards.toList();
@@ -66,6 +74,8 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
     if (vehiclesList.isNotEmpty) _selectedVehicle = vehiclesList[0]; 
 
     if (creditCardList.isNotEmpty) _selectedCreditCard = creditCardList[0];  //.MaskedCreditCardNumber.toString();
+
+    if (locationsList.isNotEmpty) _selectedLocation = locationsList[0]; 
   }
 
   @override
@@ -155,9 +165,9 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
                         )),
                     Padding(
                         padding: const EdgeInsets.all(15.0),
-                        child: DropdownButtonFormField<String>(
+                        child: DropdownButtonFormField<LocationsModel>(
                           value: _selectedLocation,
-                          onChanged: (String? value) {
+                          onChanged: (LocationsModel? value) {
                             setState(() {
                               _selectedLocation = value!;
                             });
@@ -166,18 +176,14 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
                             labelText: 'Select location',
                             border: OutlineInputBorder(),
                           ),
-                          items: [
-                            'Location 1',
-                            'Location 2',
-                            'Location 3',
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
+                          items: locationsList.map<DropdownMenuItem<LocationsModel>>((LocationsModel value) {
+                            return DropdownMenuItem<LocationsModel>(
                               value: value,
                               child: Row(
                                 children: [
                                   const Icon(Icons.star),
                                   const SizedBox(width: 10),
-                                  Text(value),
+                                  Text(value.Naziv ?? ""),
                                 ],
                               ),
                             );

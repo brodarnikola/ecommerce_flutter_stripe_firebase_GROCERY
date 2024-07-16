@@ -41,36 +41,83 @@ class CategoriesScreen extends StatelessWidget {
       'catText': 'Grains',
     },
   ];
+ 
   @override
   Widget build(BuildContext context) {
-    final utils = Utils(context);
-    Color color = utils.color;
-    return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          title: TextWidget(
-            text: 'Categories',
-            color: color,
-            textSize: 24,
-            isTitle: true,
-          ),
+    return 
+    Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleWidget(
+              color: Colors.blue,
+              diameterPercentage: 0.5, 
+              // diameter: 200,
+            ),
+            const SizedBox(height: 30), // Space between the circles
+            CircleWidget(
+              color: Colors.red,
+              diameterPercentage: 0.5, 
+              // diameter: 300,
+            ),
+          ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GridView.count(
-            crossAxisCount: 2,
-            childAspectRatio: 240 / 250,
-            crossAxisSpacing: 10, // Vertical spacing
-            mainAxisSpacing: 10, // Horizontal spacing
-            children: List.generate(6, (index) {
-              return CategoriesWidget(
-                catText: catInfo[index]['catText'],
-                imgPath: catInfo[index]['imgPath'],
-                passedColor: gridColors[index],
-              );
-            }),
-          ),
-        ));
+      );
   }
+}
+
+class CircleWidget extends StatelessWidget {
+  final Color color;
+  final double diameterPercentage;
+
+  CircleWidget({required this.color, required this.diameterPercentage});
+
+  @override
+  Widget build(BuildContext context) {
+    double diameterWidth = MediaQuery.of(context).size.width * diameterPercentage;
+    double diameterHeight = MediaQuery.of(context).size.width * diameterPercentage;
+
+    return Container(
+      width: diameterWidth,
+      height: diameterHeight,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+      ),
+    );
+  } 
+
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   final utils = Utils(context);
+  //   Color color = utils.color;
+  //   return Scaffold(
+  //       appBar: AppBar(
+  //         elevation: 0,
+  //         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+  //         title: TextWidget(
+  //           text: 'Categories',
+  //           color: color,
+  //           textSize: 24,
+  //           isTitle: true,
+  //         ),
+  //       ),
+  //       body: Padding(
+  //         padding: const EdgeInsets.all(8.0),
+  //         child: GridView.count(
+  //           crossAxisCount: 2,
+  //           childAspectRatio: 240 / 250,
+  //           crossAxisSpacing: 10, // Vertical spacing
+  //           mainAxisSpacing: 10, // Horizontal spacing
+  //           children: List.generate(6, (index) {
+  //             return CategoriesWidget(
+  //               catText: catInfo[index]['catText'],
+  //               imgPath: catInfo[index]['imgPath'],
+  //               passedColor: gridColors[index],
+  //             );
+  //           }),
+  //         ),
+  //       ));
+  // }
 }

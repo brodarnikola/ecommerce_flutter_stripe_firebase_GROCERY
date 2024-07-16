@@ -272,11 +272,37 @@ class _PlaceMarkerPage extends State<PlaceMarkerPage>
                 Positioned(
                   top: 60.0,
                   right: 5.0,
-                  child: FloatingActionButton(
-                    onPressed: _onMapTypeButtonPressed,
-                    materialTapTargetSize: MaterialTapTargetSize.padded,
-                    backgroundColor: Colors.green,
-                    child: const Icon(Icons.map, size: 36.0),
+                  child: Column(
+                    children: <Widget>[
+                      FloatingActionButton(
+                        onPressed: _onMapTypeButtonPressed,
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        backgroundColor: Colors.green,
+                        child: const Icon(Icons.map, size: 36.0),
+                      ),
+                      const SizedBox(height: 10), // Add space between the buttons
+                      FloatingActionButton(
+                        onPressed: () {
+                          if (markers.isNotEmpty) {
+                            var firstMarker = markers.values.first;
+                            controller?.animateCamera(
+                              CameraUpdate.newCameraPosition(
+                                CameraPosition(
+                                  target: firstMarker.position,
+                                  zoom: 11.0,
+                                ),
+                              ),
+                            );
+                          }
+                          // Add your onPressed function here
+                        },
+                        materialTapTargetSize: MaterialTapTargetSize.padded,
+                        backgroundColor: Colors
+                            .blue, // Change color to distinguish from the other button
+                        child: const Icon(Icons.image,
+                            size: 36.0), // Change icon to 'image'
+                      ),
+                    ],
                   ),
                 ),
               ],

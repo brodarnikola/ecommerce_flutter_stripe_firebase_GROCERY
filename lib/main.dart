@@ -66,12 +66,12 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     getCurrentAppTheme();
 
-    final GoogleMapsFlutterPlatform mapsImplementation =
-        GoogleMapsFlutterPlatform.instance;
-    if (mapsImplementation is GoogleMapsFlutterAndroid) {
-      mapsImplementation.useAndroidViewSurface = true;
-      initializeMapRenderer();
-    }
+    // final GoogleMapsFlutterPlatform mapsImplementation =
+    //     GoogleMapsFlutterPlatform.instance;
+    // if (mapsImplementation is GoogleMapsFlutterAndroid) {
+    //   mapsImplementation.useAndroidViewSurface = true;
+    //   initializeMapRenderer();
+    // }
 
     super.initState();
   }

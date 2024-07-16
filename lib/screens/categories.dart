@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grocery_app/screens/payment_preparation/payment_preparation.dart';
 import 'package:grocery_app/services/utils.dart';
 import 'package:grocery_app/widgets/categories_widget.dart';
 import 'package:grocery_app/widgets/text_widget.dart';
@@ -41,83 +42,147 @@ class CategoriesScreen extends StatelessWidget {
       'catText': 'Grains',
     },
   ];
- 
-  @override
-  Widget build(BuildContext context) {
-    return 
-    Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleWidget(
-              color: Colors.blue,
-              diameterPercentage: 0.5, 
-              // diameter: 200,
-            ),
-            const SizedBox(height: 30), // Space between the circles
-            CircleWidget(
-              color: Colors.red,
-              diameterPercentage: 0.5, 
-              // diameter: 300,
-            ),
-          ],
-        ),
-      );
-  }
-}
-
-class CircleWidget extends StatelessWidget {
-  final Color color;
-  final double diameterPercentage;
-
-  CircleWidget({required this.color, required this.diameterPercentage});
-
-  @override
-  Widget build(BuildContext context) {
-    double diameterWidth = MediaQuery.of(context).size.width * diameterPercentage;
-    double diameterHeight = MediaQuery.of(context).size.width * diameterPercentage;
-
-    return Container(
-      width: diameterWidth,
-      height: diameterHeight,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
-    );
-  } 
-
 
   // @override
   // Widget build(BuildContext context) {
-  //   final utils = Utils(context);
-  //   Color color = utils.color;
-  //   return Scaffold(
-  //       appBar: AppBar(
-  //         elevation: 0,
-  //         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-  //         title: TextWidget(
-  //           text: 'Categories',
-  //           color: color,
-  //           textSize: 24,
-  //           isTitle: true,
-  //         ),
+  //   return
+  //   Center(
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           CircleWidget(
+  //             color: Colors.blue,
+  //             diameterPercentage: 0.5,
+  //             // diameter: 200,
+  //           ),
+  //           const SizedBox(height: 30), // Space between the circles
+  //           CircleWidget(
+  //             color: Colors.red,
+  //             diameterPercentage: 0.5,
+  //             // diameter: 300,
+  //           ),
+  //         ],
   //       ),
-  //       body: Padding(
-  //         padding: const EdgeInsets.all(8.0),
-  //         child: GridView.count(
-  //           crossAxisCount: 2,
-  //           childAspectRatio: 240 / 250,
-  //           crossAxisSpacing: 10, // Vertical spacing
-  //           mainAxisSpacing: 10, // Horizontal spacing
-  //           children: List.generate(6, (index) {
-  //             return CategoriesWidget(
-  //               catText: catInfo[index]['catText'],
-  //               imgPath: catInfo[index]['imgPath'],
-  //               passedColor: gridColors[index],
-  //             );
-  //           }),
-  //         ),
-  //       ));
+  //     );
   // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ParkingReservationScreen(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(60),
+              side: const BorderSide(color: Colors.blue, width: 4),
+              elevation: 5,
+            ),
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Icon(FontAwesomeIcons.parking, size: 40),
+                Icon(Icons.map, size: 56.0),
+                SizedBox(height: 10),
+                Text(
+                  'newPayment',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 30), // Space between the buttons
+          ElevatedButton(
+            onPressed: () {
+              // Add your onPressed function here
+            },
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(40),
+              side: const BorderSide(color: Colors.blue, width: 4),
+              elevation: 5,
+            ),
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.image, size: 36.0),
+                SizedBox(height: 10),
+                Text(
+                  'getVehicle',
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
+
+// class CircleWidget extends StatelessWidget {
+//   final Color color;
+//   final double diameterPercentage;
+
+//   CircleWidget({required this.color, required this.diameterPercentage});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     double diameterWidth = MediaQuery.of(context).size.width * diameterPercentage;
+//     double diameterHeight = MediaQuery.of(context).size.width * diameterPercentage;
+
+//     return Container(
+//       width: diameterWidth,
+//       height: diameterHeight,
+//       decoration: BoxDecoration(
+//         color: color,
+//         shape: BoxShape.circle,
+//       ),
+//     );
+//   }
+
+// @override
+// Widget build(BuildContext context) {
+//   final utils = Utils(context);
+//   Color color = utils.color;
+//   return Scaffold(
+//       appBar: AppBar(
+//         elevation: 0,
+//         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+//         title: TextWidget(
+//           text: 'Categories',
+//           color: color,
+//           textSize: 24,
+//           isTitle: true,
+//         ),
+//       ),
+//       body: Padding(
+//         padding: const EdgeInsets.all(8.0),
+//         child: GridView.count(
+//           crossAxisCount: 2,
+//           childAspectRatio: 240 / 250,
+//           crossAxisSpacing: 10, // Vertical spacing
+//           mainAxisSpacing: 10, // Horizontal spacing
+//           children: List.generate(6, (index) {
+//             return CategoriesWidget(
+//               catText: catInfo[index]['catText'],
+//               imgPath: catInfo[index]['imgPath'],
+//               passedColor: gridColors[index],
+//             );
+//           }),
+//         ),
+//       ));
+// }
+// }

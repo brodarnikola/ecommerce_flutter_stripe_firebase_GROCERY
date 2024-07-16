@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:grocery_app/models/credit_cards_model.dart';
+import 'package:grocery_app/models/vehicles_model.dart';
+import 'package:grocery_app/providers/credit_cards_provider.dart';
+import 'package:grocery_app/providers/vehicles_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ParkingReservationScreen extends StatefulWidget {
   static const routeName = '/PaymentsScreen';
@@ -34,11 +39,39 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
   ];
 
   String _selectedItem = "Credit card 1";
-  String _selectedVehicle = "Vehicle 1";
+  // String _selectedVehicle = "Vehicle 1";
   String _selectedLocation = "Location 1";
+
+  late VehiclesModel? _selectedVehicle;
+  late CreditCardsModel? _selectedCreditCard;
+
+  late List<VehiclesModel> vehiclesList;
+  late List<CreditCardsModel> creditCardList;
+
+  @override
+  void initState() { 
+    super.initState();
+
+    final vehiclesProvider = Provider.of<VehiclesProvider>(context, listen: false);
+    // final vehiclesData = vehiclesProvider.getVehicles;
+
+    final creditCardsProvider = Provider.of<CreditCardsProvider>(context, listen: false);
+    // final creditCardData = creditCardsProvider.getCreditCards;
+
+    vehiclesList = vehiclesProvider.getVehicles.toList();
+
+    creditCardList = creditCardsProvider.getCreditCards.toList();
+    // creditCardData.map((element) => element.Name.toString()).toList();
+
+    if (vehiclesList.isNotEmpty) _selectedVehicle = vehiclesList[0]; 
+
+    if (creditCardList.isNotEmpty) _selectedCreditCard = creditCardList[0];  //.MaskedCreditCardNumber.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
+    
+
     return Scaffold(
       body: Center(
         child: loading
@@ -69,29 +102,25 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
                       ),
                     Padding(
                         padding: const EdgeInsets.all(15.0),
-                        child: DropdownButtonFormField<String>(
-                          value: _selectedItem,
-                          onChanged: (String? value) {
+                        child: DropdownButtonFormField<CreditCardsModel>(
+                          value: _selectedCreditCard,
+                          onChanged: (CreditCardsModel? value) {
                             setState(() {
-                              _selectedItem = value!;
+                              _selectedCreditCard = value!;
                             });
                           },
                           decoration: const InputDecoration(
                             labelText: 'Select payment',
                             border: OutlineInputBorder(),
                           ),
-                          items: [
-                            'Credit card 1',
-                            'Credit card 2',
-                            'Credit card 3',
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
+                          items: creditCardList.map<DropdownMenuItem<CreditCardsModel>>((CreditCardsModel value) {
+                            return DropdownMenuItem<CreditCardsModel>(
                               value: value,
                               child: Row(
                                 children: [
                                   const Icon(Icons.star),
                                   const SizedBox(width: 10),
-                                  Text(value),
+                                  Text(value.MaskedCreditCardNumber),
                                 ],
                               ),
                             );
@@ -99,9 +128,9 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
                         )),
                     Padding(
                         padding: const EdgeInsets.all(15.0),
-                        child: DropdownButtonFormField<String>(
+                        child: DropdownButtonFormField<VehiclesModel>(
                           value: _selectedVehicle,
-                          onChanged: (String? value) {
+                          onChanged: (VehiclesModel? value) {
                             setState(() {
                               _selectedVehicle = value!;
                             });
@@ -110,24 +139,21 @@ class _ParkingReservationScreenState extends State<ParkingReservationScreen> {
                             labelText: 'Select vehicle',
                             border: OutlineInputBorder(),
                           ),
-                          items: [
-                            'Vehicle 1',
-                            'Vehicle 2',
-                            'Vehicle 3',
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
+                          items: vehiclesList
+                              .map<DropdownMenuItem<VehiclesModel>>((VehiclesModel value) {
+                            return DropdownMenuItem<VehiclesModel>(
                               value: value,
                               child: Row(
                                 children: [
                                   const Icon(Icons.star),
                                   const SizedBox(width: 10),
-                                  Text(value),
+                                  Text(value.Name),
                                 ],
                               ),
                             );
                           }).toList(),
                         )),
-                         Padding(
+                    Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: DropdownButtonFormField<String>(
                           value: _selectedLocation,

@@ -8,6 +8,8 @@ First it needs to be typed:
 2) Firebase init -> Follow the instruction.. If you already have firebase project, you can choose override.. No need for eslint. Click "y" or "yes" to install npm packages
 3) Firebase deploy --only functions .. After that with this command you can deploy firebase functions, so that stripe payment gateway will work
 
+Inside lib folder, there is functions folder .. copy all of this folder to outside "functions" folder and then you can delete folder "instructions" inside lib folder
+
 You can add this code inside functions folder .. create new index.js file and copy this code .. For some reason it did not want to deploy to github
 "const functions = require("firebase-functions");
 const stripe = require("stripe") //(""); // Add your secret key here
